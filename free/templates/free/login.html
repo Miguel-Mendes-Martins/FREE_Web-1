@@ -102,23 +102,18 @@
   Or
 </div>
 
-
-{% for b in back_ends %}
-<a href="{% url "social:begin" b.0%}">
-  <div class="ui teal labeled icon button">
-    {{ b.1 }}
-    <i class="signup icon"></i>
-  </div>
-</a>
-
-{% endfor %}
+  {% for b in back_ends %}
+    <a href="{% url 'social:begin' b.classname %}">
+      <div class="ui teal labeled icon button">
+        {{ b.name }}
+        <i class="signup icon"></i>
+      </div>
+    </a>
+  {% endfor %}
 
 {% endif %}
 
-
 {% endblock %}
-
-
 
 {% block script %}
 

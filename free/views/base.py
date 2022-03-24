@@ -10,16 +10,13 @@ class LoginView(auth_views.LoginView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         auth_backends = []
-        auth_backend_names = getattr(settings, "AUTHENTICATION_BACKENDS", None)
-        for b in auth_backend_names:
-            print(b)
+        for b in settings.AUTHENTICATION_BACKENDS:
+            if b == 'django.contrib.auth.backends.ModelBackend':
+                continue
+            
             my_class = locate(b)
-            try:
-                print(my_class.name)
-                auth_backends.append([my_class.name, my_class.name.replace('-', " ").upper() ])
-            except:
-                pass
-        print(auth_backends)
+            auth_backends.append({ 'classname':my_class.name, 'name': my_class.name.replace('-', " ").upper()})
+
         context['back_ends'] = auth_backends
         return context
 
