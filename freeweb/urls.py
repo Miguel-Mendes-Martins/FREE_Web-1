@@ -27,6 +27,7 @@ urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
     path('summernote/', include('django_summernote.urls')),
     path('', include('social_django.urls', namespace='social')),
+    path('lti/', include('lti_provider.urls')),
 ]
 
 if settings.DEBUG:

@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'django_tables2',
     'django_summernote',
     'social_django', # required for oauth (Google, ...) athentication
+    'lti_provider.apps.LTIProviderConfig', #https://github.com/wachjose88/django-lti-provider-auth
 ]
 
 MIDDLEWARE = [
@@ -183,6 +184,7 @@ AUTHENTICATION_BACKENDS = (
    'free.auth_backends.fenix_auth.fenixOAuth2',
    'django.contrib.auth.backends.ModelBackend',
    'social_core.backends.google.GoogleOAuth2',
+   'lti_provider.backends.LTIAuthBackend',
 )
 
 SOCIAL_AUTH_FENIX_PIPELINE = (
@@ -205,3 +207,16 @@ SOCIAL_AUTH_FENIX_AUTH_KEY=env('SOCIAL_AUTH_FENIX_AUTH_KEY')
 SOCIAL_AUTH_FENIX_AUTH_SECRET=env('SOCIAL_AUTH_FENIX_AUTH_SECRET')
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
+
+LTI_PROVIDER = {
+    'TITLE': 'FREE',
+    'DESCRIPTION': 'FREE project',
+    'DEFAULT_VIEW': ('free:index', None), #(tuple of parameters or None)
+    'FAILED_VIEW': ('free:index', None), #(tuple of parameters or None)
+    'PARAMETERS_TO_VIEW': [
+#        (('example_parameter1', ), 'example.views.some_view'),
+#        (('example_parameter2', example_parameter3 ), 'example.views.some_other_view'),
+#        ...
+    ],
+    'HOOK_AFTER_USER_CREATION': 'example.utils.lti_after_user_creation'
+}
