@@ -22,6 +22,7 @@ urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
     path('login', views.LoginView.as_view(), name='login'),
     path('logout', views.LogoutView.as_view(), name='logout'),
+    path('remote_auth_error', views.AuthenticationErrorView.as_view(), name='remote_auth_error'),
 
     # API DOCUMENTATION
     re_path(r'^free-api(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),

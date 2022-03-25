@@ -213,16 +213,16 @@ if env.bool('FREE_FENIX_OAUTH'):
     SOCIAL_AUTH_FENIX_AUTH_KEY=env.str('SOCIAL_AUTH_FENIX_AUTH_KEY')
     SOCIAL_AUTH_FENIX_AUTH_SECRET=env.str('SOCIAL_AUTH_FENIX_AUTH_SECRET')
 
-
-LTI_PROVIDER = {
-    'TITLE': 'FREE',
-    'DESCRIPTION': 'FREE project',
-    'DEFAULT_VIEW': ('free:index', None), #(tuple of parameters or None)
-    'FAILED_VIEW': ('free:index', None), #(tuple of parameters or None)
-    'PARAMETERS_TO_VIEW': [
-#        (('example_parameter1', ), 'example.views.some_view'),
-#        (('example_parameter2', example_parameter3 ), 'example.views.some_other_view'),
-#        ...
-    ],
-    'HOOK_AFTER_USER_CREATION': 'example.utils.lti_after_user_creation'
-}
+if env.bool('FREE_LTI_PROVIDER'):
+    LTI_PROVIDER = {
+        'TITLE': 'FREE',
+        'DESCRIPTION': 'FREE project',
+        'DEFAULT_VIEW': ('free:index', None), #(tuple of parameters or None)
+        'FAILED_VIEW': ('free:remote_auth_error', None), #(tuple of parameters or None)
+        'PARAMETERS_TO_VIEW': [
+    #        (('example_parameter1', ), 'example.views.some_view'),
+    #        (('example_parameter2', example_parameter3 ), 'example.views.some_other_view'),
+    #        ...
+        ],
+    #    'HOOK_AFTER_USER_CREATION': 'example.utils.lti_after_user_creation'
+    }
