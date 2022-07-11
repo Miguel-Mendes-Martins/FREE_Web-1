@@ -5,11 +5,8 @@ from free.views.api import ExecutionSerializer, ResultSerializer
 from free.models import *
 from django_tables2 import Table, TemplateColumn, Column
 from django_tables2.views import SingleTableView
-from django.views.generic.base import RedirectView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404
-from django.http import Http404
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 class IndexView(TemplateView):
     template_name='free/index.html'
 
@@ -37,17 +34,11 @@ class CreateExecutionView(LoginRequiredMixin, TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        apparatus_id = kwargs['apparatus_id']
-        protocol_id = kwargs['protocol_id']
-
-        self.apparatus = get_object_or_404(Apparatus, pk=apparatus_id)
-
-        if not self.apparatus.protocols.filter(id=protocol_id).exists():
-            raise Http404("Apparatus type does implement such protocol")
-
+        self.apparatus = Apparatus.objects.get(pk=kwargs['apparatus_id'])
+        
         context['execution_json'] = {}
         context['apparatus'] = self.apparatus
-        context['protocol'] = Protocol.objects.get(pk=protocol_id)
+        context['protocol'] = Protocol.objects.get(pk=kwargs['protocol_id'])
         context['final_result'] = {}
         return context
 
@@ -90,16 +81,3 @@ class ApparatusesView(LoginRequiredMixin,SingleTableView):
     template_name = 'free/apparatuses.html'
     table_class = ApparatusTable
     queryset = Apparatus.objects.all()
-
-class ApparatusesRedirectNewExperiment(RedirectView):
-    def get_redirect_url(self, *args, **kwargs):
-        apparatus_id = kwargs['apparatus_id']
-        protocol_id = kwargs['protocol_id']
-        apparatus_type_slug = kwargs['apparatus_type_slug']
-
-        obj = get_object_or_404(Apparatus, pk=apparatus_id)
-
-        if obj.apparatus_type.slug != apparatus_type_slug:
-            raise Http404("Apparatus type does not match")
-
-        return reverse_lazy('free:execution-create', kwargs={'apparatus_id': apparatus_id, 'protocol_id': protocol_id})

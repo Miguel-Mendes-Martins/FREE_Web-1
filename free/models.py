@@ -86,7 +86,6 @@ class Execution(models.Model):
     protocol = models.ForeignKey(Protocol, on_delete=models.PROTECT)
     config = models.JSONField(_('Configuration'), default=dict, blank=True)
     status = models.CharField(_('Status'), max_length=1, choices=EXECUTION_STATUS_CHOICES)
-    created_at = models.DateField(auto_now_add=True)
     queue_time = models.DateTimeField(null=True, blank=True)
     start = models.DateTimeField(null=True, blank=True)
     end = models.DateTimeField(null=True, blank=True)

@@ -56,7 +56,6 @@ INSTALLED_APPS = [
     'django_summernote',
     'social_django', # required for oauth (Google, ...) athentication
     'free.videoConfig',
-    'free.userAdmin',
     # APPARATUS TYPES BELOW
     'pendulum',
     'dev_MonteCarlo',
@@ -207,43 +206,12 @@ AUTHENTICATION_BACKENDS = (
    'django.contrib.auth.backends.ModelBackend',
 )
 
-if env.bool('FREE_MS_OAUTH'):
-    AUTHENTICATION_BACKENDS += ('social_core.backends.microsoft.MicrosoftOAuth2',)
-    
-    SOCIAL_AUTH_MICROSOFT_GRAPH_KEY = env.str('SOCIAL_AUTH_MICROSOFT_GRAPH_KEY')
-    SOCIAL_AUTH_MICROSOFT_GRAPH_SECRET = env.str('SOCIAL_AUTH_MICROSOFT_GRAPH_SECRET')
-
-    SOCIAL_AUTH_MICROSOFT_GRAPH_PIPELINE = (
-        'social_core.pipeline.social_auth.social_details',
-        'social_core.pipeline.social_auth.social_uid',
-        'social_core.pipeline.social_auth.social_user',
-        'social_core.pipeline.user.get_username',
-        'social_core.pipeline.social_auth.associate_by_email',
-        'social_core.pipeline.user.create_user',
-        'social_core.pipeline.social_auth.associate_user',
-        'social_core.pipeline.social_auth.load_extra_data',
-        'social_core.pipeline.user.user_details',
-    )
-
-
-
 if env.bool('FREE_GOOGLE_OAUTH'):
     AUTHENTICATION_BACKENDS += ('social_core.backends.google.GoogleOAuth2',)
     
     SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.str('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
     SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.str('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
 
-    SOCIAL_AUTH_GOOGLE_OAUTH2_PIPELINE = (
-        'social_core.pipeline.social_auth.social_details',
-        'social_core.pipeline.social_auth.social_uid',
-        'social_core.pipeline.social_auth.social_user',
-        'social_core.pipeline.user.get_username',
-        'social_core.pipeline.social_auth.associate_by_email',
-        'social_core.pipeline.user.create_user',
-        'social_core.pipeline.social_auth.associate_user',
-        'social_core.pipeline.social_auth.load_extra_data',
-        'social_core.pipeline.user.user_details',
-    )
 if env.bool('FREE_FENIX_OAUTH'):
 
     AUTHENTICATION_BACKENDS += ('free.auth_backends.fenix_auth.fenixOAuth2',)

@@ -35,7 +35,6 @@ urlpatterns = [
 
     path('execution/create/<int:apparatus_id>/<int:protocol_id>', views.CreateExecutionView.as_view(), name='execution-create'),
     path('execution/<int:pk>', views.ExecutionView.as_view(), name='execution'),
-    path('apparatuses/<slug:apparatus_type_slug>/<int:apparatus_id>/<int:protocol_id>', views.ApparatusesRedirectNewExperiment.as_view()),
 
     # REST API
     path('api/v1/version', views.Version.as_view(), name='api-version'),

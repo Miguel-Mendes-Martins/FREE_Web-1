@@ -27,7 +27,6 @@ urlpatterns = [
     path('summernote/', include('django_summernote.urls')),
     path('', include('social_django.urls', namespace='social')),
     path('', include('free.videoConfig.urls')),
-    path('', include('free.userAdmin.urls')),
 ]
 
 if settings.DEBUG:

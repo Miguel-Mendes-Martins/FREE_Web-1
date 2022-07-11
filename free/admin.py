@@ -55,7 +55,7 @@ class ProtocolAdmin(SummernoteModelAdmin):
 admin.site.register(Protocol, ProtocolAdmin)
 
 class ExecutionAdmin(admin.ModelAdmin):
-    list_display = ['__str__', 'apparatus', 'created_at',  'start', 'end']
+    list_display = ['__str__', 'apparatus', 'start', 'end']
     list_filter = ['apparatus', 'apparatus__apparatus_type']
 admin.site.register(Execution, ExecutionAdmin)
 
