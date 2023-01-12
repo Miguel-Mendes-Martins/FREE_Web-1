@@ -39,16 +39,16 @@ $(document).ready(function(){
 		$(this).closest('.message').transition('fade');
 	});
 	// - DATATABLES
-	$(document).ready(function(){
-		$('#example').DataTable();
-	});
-	var table = $('#example').DataTable({
-		lengthChange: false,
-		buttons: [ 'colvis']
-	});
-	table.buttons().container().appendTo(
-		$('div.eight.column:eq(0)', table.table().container())
-	);
+//	$(document).ready(function(){
+//		$('#example').DataTable();
+//	});
+//	var table = $('#example').DataTable({
+//		lengthChange: false,
+//		buttons: [ 'colvis']
+//	});
+//	table.buttons().container().appendTo(
+//		$('div.eight.column:eq(0)', table.table().container())
+//	);
 });
 
 

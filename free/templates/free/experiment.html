@@ -10,6 +10,7 @@
 {{protocol.id|json_script:"protocol-id"}}
 {{execution_json|json_script:"execution-config"}}
 {{final_result|json_script:"final-result"}}
+{{apparatus.apparatus_type.name|json_script:"apparatus-name"}}
 
 {{video_config|json_script:"video-config"}}
 
@@ -74,7 +75,8 @@
   
 <div class="right floated thirteen wide computer sixteen wide phone column"  id="content">
     <div class="ui container">
-        <h1 >{{apparatus.apparatus_type.name}} {{apparatus.id}} in {{apparatus.location}} (<span id="exec_status"></span>)</h1>  
+       <!-- <h1 >{{apparatus.apparatus_type.name}} {{apparatus.id}} in {{apparatus.location}} (<span id="exec_status"></span>)</h1> -->
+         <h1>{{apparatus.apparatus_type.name}} in {{apparatus.location}} </h1> 
         <div class="ui icon buttons">
         <button class="ui button" onclick="open_video_window()">
             <i class="play icon"></i>
@@ -102,14 +104,17 @@
     <div class="ui bottom attached tab segment" data-tab="description-tab" >
         <div class="ui grid" >
             <div class="ten wide column ">
-                <figure class="" >
+                <!--<figure class="" >
                     <img
                     src="{% with 'free/images/'|add:apparatus.apparatus_type.slug|add:'.png' as image_static %}
                     {% static image_static %}
                     {% endwith %}"
                     alt="{{apparatus.apparatus_type.slug}}"
                     width="100%">
-                </figure>
+                </figure>-->
+                 <figure class="" >
+                         <img src="{{apparatus.image.url}}" alt="{{apparatus.apparatus_type.slug}}" width="100%"> 
+                 </figure>
             </div>
             <!--<div class="six wide column ">
                     <img src="{% static 'free/images/WPA.jpeg' %}" width="100%">
@@ -287,7 +292,7 @@ function getData(){
     
 }
 
-function process_experiment_data(data){
+function process_experiment_data_default(data){
     for (line in data){
         console.log(data[line])
         if(data[line].result_type == 'p'){
@@ -303,7 +308,7 @@ function process_experiment_data(data){
 
 
 
-function table_insert_partial_data(data){
+function table_insert_partial_data_default(data){
     console.log(data)
     table_columns = jQuery( "#results_table > thead> tr> th" );
     col_id = []
@@ -337,18 +342,28 @@ function popup_message(str){
 function resetInputValues(){
 
   	input_list = jQuery( ".free-input" );
+    let check_helper = 1;
   	for ( ind = 0, len = input_list.length; ind < len; ind++ ) {
-           	if(["radio"].includes(input_list[ind].type) )
-        	{
-                	console.log("ROSSA");
-                	console.log(input_list[ind].checked);
-        	}
+        i = $(input_list[ind]);
+        if(["radio"].includes(input_list[ind].type) )
+        {
+            //console.log("ROSSA");
+            //console.log(input_list[ind].checked);
+            console.log("Here teste")
+            if (protocol_input_arguments[i.attr("id")].default === check_helper){
+                i.prop("checked", true).trigger('change');
+            }
+            else{
+                i.prop("checked", false).trigger('change');
+            }
+            check_helper = check_helper + 1;
+        }
 		else{
-			i = $(input_list[ind]);
-    			console.log(i.val())
-    			console.log(i.attr("id"))
-    			console.log( protocol_input_arguments[i.attr("id")].default)
-    			new_val = protocol_input_arguments[i.attr("id")].default
+			//i = $(input_list[ind]);
+            console.log(i.val())
+            console.log(i.attr("id"))
+            console.log( protocol_input_arguments[i.attr("id")].default)
+            new_val = protocol_input_arguments[i.attr("id")].default
    			i.prop("value", new_val).trigger('change');
 		}
     	}
@@ -362,21 +377,32 @@ function resetInputValues(){
 function reloadInputValues(){
 
     input_list = jQuery( ".free-input" );
+    let check_helper=1;
     for ( ind = 0, len = input_list.length; ind < len; ind++ ) {
-	if(["radio"].includes(input_list[ind].type) )
-        {
-                console.log("ROSSA");
-                console.log(input_list[ind].checked);
-        }
-	else{
+        //console.log(input_list[ind])
+        i = $(input_list[ind]);
+        if(["radio"].includes(input_list[ind].type) )
+            {
+                //console.log("ROSSA");
+                //console.log(current_execution.config[i.attr("id")]);
+                if (current_execution.config[i.attr("id")] === check_helper)
+                {
+                   i.prop("checked", true).trigger('change');
+                }
+                else{
+                    i.prop("checked", false).trigger('change');
+                }
+                check_helper = check_helper + 1;
+            }
+        else{
 
-       		i = $(input_list[ind]);
-        	console.log(i.val())
-        	console.log(i.attr("id"))
-        	console.log(current_execution.config[i.attr("id")])
-        	new_val = current_execution.config[i.attr("id")]
-        	i.prop("value", new_val).trigger('change');
-   	}
+                i = $(input_list[ind]);
+                console.log(i.val())
+                console.log(i.attr("id"))
+                console.log(current_execution.config[i.attr("id")])
+                new_val = current_execution.config[i.attr("id")]
+                i.prop("value", new_val).trigger('change');
+        }
     }
     $("#execution_name").val(current_execution.name)
     execution_status = 'C'
@@ -565,7 +591,7 @@ function retrieve_execution_configuration(){
 	if(["radio"].includes(input_list[ind].type) )
 	{
 		console.log("ROSSA");
-        	console.log(input_list[ind].checked);
+        console.log(input_list[ind].checked);
 		if (input_list[ind].checked)
 		{
 			i = $(input_list[ind]);
@@ -624,6 +650,8 @@ function save_experiment() {
   
   }
 
+
+  
 function create_experiment() {
     form_config = retrieve_execution_configuration();
     console.log(form_config );
@@ -660,7 +688,10 @@ function create_experiment() {
       data: data_send,
     }).then(response => {
         // we should do a redirect to the new page.....
+        // Original:
         window.location.href = '/execution/'+String(response.data.id)
+        // Rossa Version: 
+        //window.history.pushState({}, '', window.location.origin+'/execution/'+String(response.data.id));
         current_execution = response.data;
         execution_status = 'C'
 
@@ -680,16 +711,16 @@ $( document ).ready(function() {
 
     $(".free-input").change(onInputChanged)
 
-
+    //console.log(current_execution)
     var results_table = $('#results_table').DataTable({
             'buttons': [ 'copy',
                 {
                     extend: 'csv',
-                    title: 'Pendulum_results__'  
+                    title: document.getElementById('apparatus-name').textContent+' | Execution # '+String(current_execution.id)+' | Config- '+JSON.stringify(current_execution.config)
                 },
                 {
                     extend: 'excel',
-                    title: 'Pendulum_results__'
+                    title: document.getElementById('apparatus-name').textContent+' | Execution # '+String(current_execution.id)+' | Config- '+JSON.stringify(current_execution.config)
                 },
             ], 
             order: [[0, 'desc']],

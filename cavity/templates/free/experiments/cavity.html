@@ -87,37 +87,39 @@
                 	</div>
             	</div>
 			
-		<div class="column">
-                	<div class="ui segment">
-                    		<legend> <h3>{% trans 'Gas Selection'%}</h3></legend>
-					
-                    		<div  class="field" id="radio">
-                        		<div class="ui  blue radio checkbox langmuir">
-                             			<input class="free-input"  type="radio" id="gas_selector" name="gas_type" checked="checked"  value="1">
-                                 		<label>Helium</label>
-                        		</div>
-						
-                        		<div class="field">
-                            			<div class="ui radio checkbox langmuir">
-                                			<input class="free-input"  type="radio" id="gas_selector" name="gas_type"  value="2">
-                                    			<label>Nitrogen</label>
-                            			</div>
-                       			</div>		
-						
-					<div class="field">
-                            			<div class="ui radio checkbox langmuir">
-                                			<input class="free-input" type="radio" id="gas_selector"  name="gas_type" value="3">
-                                    			<label>Argon</label>
-                            			</div>
-                        		</div>
-							 
-				</div>
-				<div class="ui toggle checkbox" onclick="change_discharge()">
+                <div class="column">
+                    <div class="ui segment">
+                        <legend> <h3>{% trans 'Gas Selection'%}</h3></legend>
+                        
+                        <div class="field" id="radio">
+                            <div class="ui  blue radio checkbox langmuir">
+                                 <input  class="free-input"  type="radio" id="gas_selector" name="gas_type" checked="checked"  value="1">
+                                     <label>Helium</label>
+                            </div>
+                            
+                            <div class="field">
+                                <div class="ui radio checkbox langmuir">
+                                    <input  class="free-input"  type="radio" id="gas_selector" name="gas_type"  value="2">
+                                        <label>Nitrogen</label>
+                                </div>
+                            </div>		
+                            
+                            <div class="field">
+                                <div class="ui radio checkbox langmuir">
+                                    <input  class="free-input"  type="radio" id="gas_selector" name="gas_type"  value="3">
+                                        <label>Argon</label>
+                                </div>
+                            </div>
+                                 
+                        </div>
+                    
+				        <div class="ui toggle checkbox" onclick="change_discharge()">
                             		<input  class="free-input" type="checkbox" name="public"  id="discharge" value='0'>
                             		<label>Discharge</label>
-                        	</div>   
-                	</div>
-            	</div>
+                        </div>   
+                    </div>
+                </div>
+            	
            
         </div>
 		<!--4-->
@@ -153,71 +155,28 @@
 
 
 
-{% block executiontab_ %}
-<div class="ui grid stackable">
-    <div class="row">
-    <div class=" ten wide column">
-        <h3>Histogram of the pendulum periods</h3>
-       <div>
-            <div  id="myplot1"></div>
-        </div>
-    </div>
-</div>
-<div class="row">
-
-    <div class=" five wide column">
-        <h3>Velocidade Linear vs Amostra</h3>
-            <div >
-                <div id="myplot"></div>
-            </div>
-    </div>
-    <div class=" five wide column">
-        <h3>Period vs. number of samples</h3>
-        <div>
-            <div  id="myplot2"></div>
-        </div>
-    </div>
-    </div>
-</div>
-    <table id="results_table" class="ui celled table display" style="width:100%">
-        <thead>
-            <tr>
-                <th id="time">{% trans " Time " %}</th>
-                <th id="pressure">{% trans "Pressure [Pa]" %}</th>
-		<th id="frequency">{% trans "Frequency [MHz]" %}</th>
-            </tr>
-        </thead>
-    </table>
-{% endblock %}
-
 
 <!-- Begin of the execution tab-->
 {% block executiontab %}
 <div class="ui grid stackable">
+    
     <div class="row">
         <div class=" ten wide column">
-            <h3>Distance vs Time</h3>
+            <h3>Pressure vs Time</h3>
                 <div >
-                    <canvas id="plot_period_histogram"></canvas>
+                    <canvas id="plot_pressure_time"></canvas>
                 </div>
         </div>
    
     </div>
-	
     <div class="row">
-        
-        <div class="eight wide column">
-            <h3>Velocidade Linear vs Amostra</h3>
+        <div class=" ten wide column">
+            <h3>Spectrogram</h3>
                 <div >
-                    <canvas id="plot_sample_velocity"></canvas>
+                    <canvas id="plot_Spectrogram"></canvas>
                 </div>
         </div>
-        <div class="eight wide column">
-            <h3>Velocidade Linear vs Amostra</h3>
-                <div >
-                    <canvas id="plot_sample_period"></canvas>
-                </div>
-        </div>
+   
     </div>
 </div>
 
@@ -226,7 +185,7 @@
             <tr>
 		<th id="time">{% trans " Time " %}</th>
                 <th id="pressure">{% trans "Pressure [Pa]" %}</th>
-                <th id="frequency">{% trans "Frequency [MHz]" %}</th>
+                <th id="frequency">{% trans "Frequency [Hz]" %}</th>
                 <th id="magnitude">{% trans "Amplitud [dB]" %}</th> 
             </tr>
         </thead>
@@ -244,14 +203,88 @@
     var receive_error_velocity
     var receive_error_period
 
-    var plot_sample_velocity
-    var plot_sample_period
-    var plot_period_histogram
+    var plot_Spectrogram
+    var plot_pressure_time
+	let data_value_p 
+	let data_value_a
+	let data_value_f 
+	let data_value_t 
+
+    let itera_num = 0
+
     var period_data = []
 
+    var color_ampl = ["darkgreen","coral","mediumpurple","orange","aqua","green","red","blue", 'purple']
+
+// TODO: fazer as tabelas 
 function process_experiment_data(data){
-	console.log("provavel que funcione")
+    for (line in data){
+        	//console.log(data[line])
+		if(data[line].result_type == 'p'){
+            if (Array.isArray(data[line].value)) {
+                data_value_t = data[line].value.map(data => data.time).filter(function (element) { 
+                            return element !== undefined;
+                    });
+                data_value_p = data[line].value.map(data => (parseFloat(data.pressure)*100).toFixed(2)).filter(function (element) { 
+                            return element !== undefined;
+                    });
+            }
+            else{
+                data_value_t = [data[line].value.time]
+                data_value_p = [(parseFloat(data[line].value.pressure)*100).toFixed(2)]
+                if (data[line].value.frequency){
+                    data_value_f = data[line].value.frequency
+                    data_value_a = data[line].value.magnitude
+                }
+                else{
+                    data_value_f = 0
+                    data_value_a = 0
+                }
+            }
+            // if (data_value_a != 0)
+            //     console.log(data_value_a)
+            console.log(data_value_t)
+            console.log(data_value_p)
+            process_partial_data(data_value_t,data_value_p,data_value_a,data_value_f);
+            table_insert_partial_data(data_value_t,data_value_p,data_value_a,data_value_f);	
+		}	
+	}
 }
+    
+function table_insert_partial_data(data_value_t,data_value_p,data_value_a,data_value_f){
+    let value_data_table = "";
+    table_columns = jQuery( "#results_table > thead> tr> th" );
+    col_id = []
+    for ( ind = 0, len = table_columns.length; ind < len; ind++ ) {
+        col_id.push($(table_columns[ind]).attr("id"))
+    }
+    var t = $('#results_table').DataTable();
+	console.log("ooo");
+    row_data = []
+    if (data_value_a == 0)
+    {
+        row_data = [data_value_t[0],data_value_p[0],"-","-"]
+        console.log(row_data)
+        t.row.add(row_data)
+        // t.draw()
+    }
+    else{
+        data_value_a.forEach((element, index) =>{
+            row_data=[data_value_t[0],data_value_p[0],data_value_f[index],element]
+            t.row.add(row_data)
+        })
+    }
+
+    // count_draw = count_draw +1;
+
+    // if (count_draw >= data_value_a.length){
+	t.draw()
+    //    count_draw = 0
+    // }
+
+    console.log(row_data)
+}
+
 
 
 function process_final_data(data_line){
@@ -259,41 +292,37 @@ function process_final_data(data_line){
 
 }
 
-function process_partial_data(data_line){
-    sample_number = parseInt(data_line.value.time) 
-    val3 = parseFloat(data_line.value.pressure)
-    val1 = parseFloat(data_line.value.frequency)
+function process_partial_data(time,pressure,amplitude,freq){
    
-    plot_sample_velocity.data.datasets[0].data.push({
-        x: sample_number, 
-        y: val3,
-        yMin: val3 - receive_error_velocity,
-        yMax: val3 + receive_error_velocity,
-    });
-    plot_sample_velocity.update();
+    plot_pressure_time.data.labels = plot_pressure_time.data.labels.concat(time);
 
+    // console.log(plot_pressure_time);
 
+	plot_pressure_time.data.datasets[0].data = plot_pressure_time.data.datasets[0].data.concat(pressure);
 
-    period_data.push(val1)
+    plot_pressure_time.update();
 
-    bin1 = d3.bin()
-    histo = bin1(period_data);
-    const bins = histo.map((k, i) => (k.x0+ " .. "+k.x1 ));
-    const data = histo.map((k, i) => (k.length));
-    plot_period_histogram.data.labels = bins
-    plot_period_histogram.data.datasets[0].data = data
-    plot_period_histogram.update();
-
-
-    plot_sample_period.data.datasets[0].data.push({
-        x: sample_number, 
-        y: val1,
-        yMin: val1 - receive_error_period,
-        yMax: val1 + receive_error_period,
-    });
-    plot_sample_period.update();
+    if (data_value_a != 0){
+        if (itera_num == 0)
+        {
+            plot_Spectrogram.data.labels = plot_Spectrogram.data.labels.concat(freq);
+        }
+        plot_Spectrogram.data.datasets = plot_Spectrogram.data.datasets.concat([{
+                label: `Spectr. #${itera_num+1} p= ${pressure[0]}`,
+                borderColor: color_ampl[itera_num],
+                backgroundColor: color_ampl[itera_num],
+                pointRadius:1,
+                showLine:false,
+                borderWidth:1,
+                data: amplitude,
+            },
+        ]);
+        itera_num = itera_num +1
+        plot_Spectrogram.update();
+    }
 
 }
+
 
 function on_save_experiment_UI(){
 
@@ -305,7 +334,7 @@ function on_save_experiment_UI(){
 
 function on_ready_experiment_UI(){
 
-    	configure_slider("f_strat")
+    configure_slider("f_strat")
 	configure_slider("f_end")
 	configure_slider("f_step")
 	configure_slider("n_iteration")
@@ -313,18 +342,57 @@ function on_ready_experiment_UI(){
 	configure_radio()
 	configure_slider("back_pressure")
 	configure_slider("magnetic_field")
+    itera_num = 0
 	
 	
     receive_error_velocity = 0.1;
     receive_error_period = 0.0005;//response.data.value.e_period;
 
-    ctx = $("#plot_sample_velocity")[0].getContext('2d');
-    plot_sample_velocity = new Chart(ctx, {
-        type: 'scatterWithErrorBars',
+
+    ctx = $("#plot_Spectrogram")[0].getContext('2d');
+    plot_Spectrogram = new Chart(ctx, {
+        type: 'scatter',
+        data: {
+            datasets: [],
+        },
+        options: {
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'right',
+                }, 
+                autocolors: false,
+            },
+            scales: {
+                y: {
+                    title:{
+                        display: true, 
+                        text: gettext('Amplitude [dB]'),
+                    },
+                    //min: 8.5,
+                    //max: 9.5,
+                },
+                x: {
+                    title:{
+                        display: true, 
+                        text: gettext('Frequency [Hz]'),
+                    },
+                },
+            },
+        }
+    });
+
+    ctx = $("#plot_pressure_time")[0].getContext('2d');
+    plot_pressure_time = new Chart(ctx, {
+        type: 'line',
+        labels: [],
         data: {
             datasets: [{
                 borderColor: "blue",
                 backgroundColor: "blue",
+                pointRadius:1,
+                showLine:false,
+                borderWidth:1,
                 data: [ ],
             },],
         },
@@ -339,93 +407,15 @@ function on_ready_experiment_UI(){
                 y: {
                     title:{
                         display: true, 
-                        text: gettext('Linear velocity [cm/s]'),
-                    },
-                    min: 8.5,
-                    max: 9.5,
+                        text: gettext('Pressure [Pa]'),
+                    }
+                  //  min: 8.5,
+                    //max: 9.5,
                 },
                 x: {
                     title:{
                         display: true, 
-                        text: gettext('# Samples'),
-                    },
-                },
-            },
-        }
-    });
-
-    ctx = $("#plot_period_histogram")[0].getContext('2d');
-    plot_period_histogram = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: [],
-            datasets: [{
-                borderColor: "blue",
-                backgroundColor: "blue",
-                data: [],
-            },],
-        },
-        options: {
-            offset: false,
-            animation: true,
-            scales: {   
-                x: {
-                    title:{
-                        display: true, 
-                        text: gettext('Period [s]'),
-                    },
-                    grid: {
-                        offset: true
-                        }
-                },
-                y: {
-                    ticks: {
-                        beginAtZero: true
-                    },
-                    
-                }
-            },
-            plugins: {
-                legend: {
-                    display: false,
-                }, 
-                autocolors: false,
-            },
-        }
-    });
-
-
-
-
-
-    ctx = $("#plot_sample_period")[0].getContext('2d');
-    plot_sample_period = new Chart(ctx, {
-        type: 'scatterWithErrorBars',
-        data: {
-            datasets: [{
-                borderColor: "blue",
-                backgroundColor: "blue",
-                data: [ ],
-            },],
-        },
-        options: {
-            plugins: {
-                legend: {
-                    display: false,
-                }, 
-                autocolors: false,
-            },
-            scales: {
-                y: {
-                    title:{
-                        display: true, 
-                        text: gettext('Period [s]'),
-                    },
-                },
-                x: {
-                    title:{
-                        display: true, 
-                        text: gettext('# Samples'),
+                        text: gettext('Elapsed Time[HH:MM:SS]'),
                     },
                 },
             },
@@ -433,6 +423,8 @@ function on_ready_experiment_UI(){
     });
 
 }
+
+
 function configure_slider(name){
         help_spac = 0;
         ticker =  Number.parseFloat(protocol_input_arguments[name].subPart);
@@ -566,19 +558,7 @@ function change_discharge () {
 
 
 
-function process_partial_data(data_line){
-    sample_number = parseInt(data_line.value.Sample_number) 
-    val3 = parseFloat(data_line.value.Val3)
-    val1 = parseFloat(data_line.value.Val1)
-   
- 
 
-
-    Plotly.extendTraces('myplot', {x: [[sample_number]],y: [[val3]],'error_y.array': [[receive_error_velocity]]}, [0,]);
-   Plotly.extendTraces('myplot1', {x:  [[val1]]}, [0]);
-   Plotly.extendTraces('myplot2', {x: [[sample_number]],y: [[val1]],'error_y.array': [[receive_error_period]]}, [0]);
-
-}
 
 
 
