@@ -2,6 +2,7 @@ from rest_framework import generics, serializers, views
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from free.models import *
+from mc_quiz.quiz_mc.models import *
 import json
 import decimal
 from jsonschema import validate, ValidationError as JSONValidationError
@@ -98,6 +99,13 @@ class ExecutionConfigure(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user, status = 'C')
+        if(self.request.META.get('HTTP_REFERER') != None):
+            if (self.request.META.get('HTTP_REFERER').split("/")[-4] != "execution" ):
+                exec_id = serializer['id'].value
+                quiz = self.request.META.get('HTTP_REFERER').split("/")[-3]
+                sitting = Sitting.objects.get(quiz=Quiz.objects.get(url=quiz),user=self.request.user, complete = False)
+                sitting.execution = Execution.objects.get(pk=exec_id)
+                sitting.save()
 
 class ExecutionRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     """

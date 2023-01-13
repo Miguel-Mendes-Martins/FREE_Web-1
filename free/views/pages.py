@@ -23,6 +23,8 @@ class ExecutionView(LoginRequiredMixin, TemplateView):
         context['execution_json'] = ExecutionSerializer(self.execution).data
         context['apparatus'] = self.execution.apparatus
         context['protocol'] = self.execution.protocol
+        if (self.request.META.get('HTTP_REFERER') != None):
+            context['source'] = self.request.META.get('HTTP_REFERER').split("/")[3]
         try:
             context['final_result'] = ResultSerializer(Result.objects.get(result_type='f', execution=self.execution)).data
         except:

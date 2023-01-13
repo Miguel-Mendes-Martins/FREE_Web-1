@@ -1,0 +1,266 @@
+[
+    {
+        "model": "quiz_mc.category",
+        "pk": 1,
+        "fields": {
+            "category": "Pendulum"
+        }
+    },
+    {
+        "model": "quiz_mc.category",
+        "pk": 2,
+        "fields": {
+            "category": "MonteCarlo"
+        }
+    },
+    {
+        "model": "quiz_mc.subcategory",
+        "pk": 1,
+        "fields": {
+            "sub_category": "Quiz",
+            "category": 2
+        }
+    },
+    {
+        "model": "quiz_mc.quiz",
+        "pk": 1,
+        "fields": {
+            "title": "MonteCarloQuiz",
+            "description": "Creating this to test quizzes",
+            "url": "dev_MonteCarlo",
+            "category": 2,
+            "random_order": false,
+            "max_questions": 5,
+            "answers_at_end": true,
+            "exam_paper": true,
+            "single_attempt": false,
+            "pass_mark": 50,
+            "success_text": "Congrats you passed!",
+            "fail_text": "Sorry you failed :(",
+            "draft": false
+        }
+    },
+    {
+        "model": "quiz_mc.question",
+        "pk": 1,
+        "fields": {
+            "category": 2,
+            "sub_category": 1,
+            "figure": "",
+            "content": "Execute the experiment before starting the quiz",
+            "explanation": "Decimal place",
+            "quiz": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "essay_mc.essay_question",
+        "pk": 1,
+        "fields": {}
+    },
+    {
+        "model": "quiz_mc.question",
+        "pk": 2,
+        "fields": {
+            "category": 2,
+            "sub_category": null,
+            "figure": "",
+            "content": "What is the variance of the experiment?",
+            "explanation": "Decimal place",
+            "quiz": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "essay_mc.essay_question",
+        "pk": 2,
+        "fields": {}
+    },
+    {
+        "model": "free.apparatustype",
+        "pk": 2,
+        "fields": {
+            "name": "Monte Carlo",
+            "name_en": "Monte Carlo",
+            "name_pt": "Monte Carlo",
+            "name_es": null,
+            "slug": "dev_MonteCarlo",
+            "description": "<p>Breee</p>",
+            "description_en": "<p>Breee</p>",
+            "description_pt": "",
+            "description_es": "",
+            "scientific_area": "area",
+            "scientific_area_en": "area",
+            "scientific_area_pt": null,
+            "scientific_area_es": null,
+            "lab_type": "type",
+            "lab_type_en": "type",
+            "lab_type_pt": null,
+            "lab_type_es": null
+        }
+    },
+    {
+        "model": "free.apparatus",
+        "pk": 2,
+        "fields": {
+            "apparatus_type": 2,
+            "location": "LocalHost",
+            "location_en": "LocalHost",
+            "location_pt": null,
+            "location_es": null,
+            "description": "",
+            "description_en": "",
+            "description_pt": "",
+            "description_es": "",
+            "secret": "local_help",
+            "owner": "FREE",
+            "timeout": 60,
+            "config": {
+                "id": "DEV_TOOL",
+                "serial_port": {
+                    "ports_restrict": [
+                        "/dev/ttyAMA0"
+                    ],
+                    "baud": "115200",
+                    "numbits": "8",
+                    "stopbits": "1",
+                    "partitybits": "0",
+                    "listening_timeout": "100000",
+                    "death_timeout": "10000000"
+                },
+                "protocols": [
+                    {
+                        "exp_paremeters": [
+                            {
+                                "step": "1",
+                                "nome": "DeltaX",
+                                "start": 10,
+                                "min_val": "3",
+                                "max_val": "22"
+                            },
+                            {
+                                "step": "1",
+                                "nome": "Samples",
+                                "start": 50,
+                                "min_val": "2",
+                                "max_val": "500"
+                            }
+                        ],
+                        "measurement_channels": {
+                            "num_channels": "5",
+                            "channel_format": [
+                                "####",
+                                "###.####",
+                                "###.####",
+                                "###.####",
+                                "##.#"
+                            ]
+                        },
+                        "timeout": {
+                            "default": "45000",
+                            "id": "10000",
+                            "cfg": "80000",
+                            "cur": "5000",
+                            "str": "60000",
+                            "data_bin": "120000",
+                            "no_data": "60000",
+                            "end": "3000000",
+                            "stp": "180000",
+                            "rst": "180000"
+                        }
+                    },
+                    {
+                        "exp_paremeters": [
+                            {
+                                "step": "1",
+                                "min_val": "5",
+                                "max_val": "14"
+                            },
+                            {
+                                "step": "1",
+                                "min_val": "10",
+                                "max_val": "50"
+                            }
+                        ],
+                        "measurement_channels": {
+                            "num_channels": "5",
+                            "channel_format": [
+                                "####",
+                                "###.####",
+                                "###.####",
+                                "###.####",
+                                "##.#"
+                            ]
+                        },
+                        "timeout": {
+                            "default": "45000",
+                            "id": "10000",
+                            "cfg": "80000",
+                            "cur": "5000",
+                            "str": "60000",
+                            "data_bin": "120000",
+                            "no_data": "60000",
+                            "end": "3000000",
+                            "stp": "180000",
+                            "rst": "180000"
+                        }
+                    }
+                ],
+                "errors": [
+                    "Something wrong happened !",
+                    "Sensor has failed.",
+                    "Value out of range..."
+                ]
+            },
+            "video_config": {
+                "stream_id": 1601690087264469,
+                "stream_server": "http://localhost:8088/janus",
+                "secret": "74711174"
+            },
+            "last_online": "2023-01-12T18:59:32.669Z",
+            "protocols": [
+                2
+            ]
+        }
+    },
+    {
+        "model": "free.protocol",
+        "pk": 2,
+        "fields": {
+            "apparatus_type": 2,
+            "name": "MC",
+            "name_en": "MC",
+            "name_pt": null,
+            "name_es": null,
+            "config": {
+                "type": "object",
+                "properties": {
+                    "R": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "default": 2,
+                        "maximum": 10,
+                        "multipleOf": 1
+                    },
+                    "Iteration": {
+                        "type": "integer",
+                        "minimum": 5,
+                        "default": 20,
+                        "maximum": 1000,
+                        "multipleOf": 1
+                    }
+                },
+                "required": [
+                    "R",
+                    "Iteration"
+                ]
+            },
+            "description": "",
+            "description_en": "",
+            "description_pt": "",
+            "description_es": ""
+        }
+    }
+]

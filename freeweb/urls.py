@@ -28,6 +28,8 @@ urlpatterns = [
     path('', include('social_django.urls', namespace='social')),
     path('', include('free.videoConfig.urls')),
     path('', include('free.userAdmin.urls')),
+    path('mc_quiz/',include('mc_quiz.quiz_mc.urls'),name='mc_quiz'),
+    path('lti/', include('lti_provider.urls')),
 ]
 
 if settings.DEBUG:

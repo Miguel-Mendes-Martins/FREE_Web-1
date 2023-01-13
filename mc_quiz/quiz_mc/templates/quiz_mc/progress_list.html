@@ -1,0 +1,56 @@
+{% extends 'free/base.html' %}
+{% load i18n %}
+{% load django_tables2 %}
+{% load quiz_tags %}
+
+{% block title %} {% trans 'List of Incomplete quizzes' %} {% endblock %}
+
+{% block content %}
+
+    <div class="right floated thirteen wide computer sixteen wide phone column " id="content">
+        <div class="ui container grid">
+            <div class="row"><div class="fifteen wide computer sixteen wide phone centered column">
+                
+                <div class="fifteen wide computer sixteen wide phone centered column">
+                    
+                    <h2><i class="table icon"></i>{% trans 'List of Incomplete quizzes' %}</h2>
+                    <div class="ui divider"></div>
+                    <div class="ui grid">       
+                        <div class="ui stacked segment">
+                            <div class="ui green ribbon icon label">{% trans 'List of Incomplete quizzes'%}</div>
+                            <div class="ui divider"></div>
+
+                            {% render_table table_incomplete %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p></p>
+    <p></p>
+    <br>
+
+    <div class="right floated thirteen wide computer sixteen wide phone column" id="content">
+        <div class="ui container grid">
+            <div class="row"><div class="fifteen wide computer sixteen wide phone centered column">
+                
+                <div class="fifteen wide computer sixteen wide phone centered column">
+                    
+                    <h2><i class="table icon"></i>{% trans 'List of past results' %}</h2>
+                    <div class="ui divider"></div>
+                    <div class="ui grid">       
+                        <div class="ui stacked segment">
+                            <div class="ui blue ribbon icon label">{% trans 'List of past results'%}</div>
+                            <div class="ui divider"></div>
+
+                            {% render_table table %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
