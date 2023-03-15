@@ -27,7 +27,7 @@
         "fields": {
             "title": "MonteCarloQuiz",
             "description": "Creating this to test quizzes",
-            "url": "dev_MonteCarlo",
+            "url": "devmontecarlo",
             "category": 2,
             "random_order": false,
             "max_questions": 5,
@@ -57,7 +57,9 @@
     {
         "model": "essay_mc.essay_question",
         "pk": 1,
-        "fields": {}
+        "fields": {
+            "verif_function": ""
+        }
     },
     {
         "model": "quiz_mc.question",
@@ -66,8 +68,8 @@
             "category": 2,
             "sub_category": null,
             "figure": "",
-            "content": "What is the variance of the experiment?",
-            "explanation": "Decimal place",
+            "content": "What is the approximate area of the circle?",
+            "explanation": "The approximate area was:",
             "quiz": [
                 1
             ]
@@ -76,7 +78,9 @@
     {
         "model": "essay_mc.essay_question",
         "pk": 2,
-        "fields": {}
+        "fields": {
+            "verif_function": "area_approximation"
+        }
     },
     {
         "model": "free.apparatustype",

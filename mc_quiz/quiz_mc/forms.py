@@ -18,4 +18,4 @@ class EssayForm(forms.Form):
             self.fields["answers"] = forms.FloatField(required=False)
         else:
             self.fields["answers"] = forms.FloatField()
-        #self.fields["answers"] = forms.CharField(widget=Textarea(attrs={'style': 'width:100%'}))
+        

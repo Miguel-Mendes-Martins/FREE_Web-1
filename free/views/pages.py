@@ -25,6 +25,12 @@ class ExecutionView(LoginRequiredMixin, TemplateView):
         context['protocol'] = self.execution.protocol
         if (self.request.META.get('HTTP_REFERER') != None):
             context['source'] = self.request.META.get('HTTP_REFERER').split("/")[3]
+            if self.request.META.get('HTTP_REFERER').split("/")[3] == "mc_quiz":
+                context['base'] = "free/base_stripped.html"
+            else:
+                context['base'] = "free/base.html"
+        else: 
+            context['base'] = "free/base.html"
         try:
             context['final_result'] = ResultSerializer(Result.objects.get(result_type='f', execution=self.execution)).data
         except:
@@ -49,6 +55,7 @@ class CreateExecutionView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         apparatus_id = kwargs['apparatus_id']
         protocol_id = kwargs['protocol_id']
+        context['base'] = "free/base.html"
 
         self.apparatus = get_object_or_404(Apparatus, pk=apparatus_id)
 
@@ -62,6 +69,7 @@ class CreateExecutionView(LoginRequiredMixin, TemplateView):
         return context
 
     def get_template_names(self):
+        print(self.apparatus.apparatus_type.slug)
         return ['free/experiments/' + self.apparatus.apparatus_type.slug + '.html']
 
 

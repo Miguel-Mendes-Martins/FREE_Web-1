@@ -102,8 +102,10 @@ class LTIRoutingView(LTIAuthMixin, View):
             pk = request.GET.get('pk')
             url = self.lookup_assignment_name(assignment_name, pk)
         elif request.POST.get('custom_category', None) is not None:
-            assignment_name = f"{request.POST.get('custom_category')}:quiz_question"
-            url = reverse(assignment_name,args=(request.POST.get('custom_quiz_url'),))
+            assignment_name = (f"{request.POST.get('custom_category')}:"
+                              "quiz_question")
+            url = reverse(assignment_name,args=(
+                request.POST.get('custom_quiz_url'),))
         elif settings.LTI_TOOL_CONFIGURATION.get('new_tab'):
             url = reverse('lti-landing-page')
         else:
@@ -114,7 +116,6 @@ class LTIRoutingView(LTIAuthMixin, View):
         print("before redirect:",url)
         self.request.session['lti_login'] = True
         return HttpResponseRedirect(url)
-        # return HttpResponseRedirect(reverse('mc_quiz:quiz_question',args=('devmontecarlo',)))
 
 
 @method_decorator(xframe_options_exempt, name='dispatch')

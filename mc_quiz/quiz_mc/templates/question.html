@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends base %}
 {% load i18n%}
 {% load static %}
 
@@ -16,6 +16,17 @@
 {{execution_json|json_script:"execution-config"}}
 {{final_result|json_script:"final-result"}}
 {{quiz.id|json_script:"quiz-id"}}
+
+<script>
+    X_CSRFToken = document.getElementById('csrf_token').textContent
+
+    var apparatus_id = JSON.parse(document.getElementById('apparatus-id').textContent);
+    var protocol_id = JSON.parse(document.getElementById('protocol-id').textContent);
+	current_execution = JSON.parse(document.getElementById('execution-config').textContent);
+	var quiz_id = JSON.parse(document.getElementById('quiz-id').textContent);
+
+</script>
+
 {% endblock %}
 
 {% block content %}
@@ -66,23 +77,26 @@
 		<strong>{{ question.category }}</strong>
 		</p>
 
-		<p class="lead">{{ question.content }}</p>
+		<p class="lead">{{ question.content }} </p>
+		{% if question.rounding %}
+		Answer with {{decimal_cases}} decimal cases
+		{% endif %}		
 
 		{% if question.figure %}
 			<img src="{{ question.figure.url }}" alt="{{ question.content }}" />
 		{% endif %}
 
-
-		<div id="configuration-input">
-			<input  type="number" id="R" value="2">
-			<input  type="number" id="Iteration" value="100">
-		</div>
-
-
 		{% if question.sub_category %}
 			{% if execution.id == None %}
-			<!-- <a href="{% url 'free:execution-create' question.category.pk question.category.pk%}"><button class='ui button'>{% trans 'Start execution'%}</button></a> -->
-				<div class="ui grey button" onclick="queue(config_input)" id="saveButton">{% trans 'Start execution'%}</div>
+				{% if sub_category == "Create" %}
+				<div class="ui grey button" onclick="create_experiment()" id="saveButton">{% trans 'Start execution'%}</div>
+				{% elif sub_category == "Fetch" %}
+					<form action="" method="POST" id="form">{% csrf_token %}
+					<input type=hidden name="question_id" value="{{ question.id }}">
+					<input type=hidden name="apparatus_id" value="{{ quiz.category.pk }}">
+					<input type="submit" value="{% trans "Fetch experiment" %}" class="ui grey button" id="fetchButton" >
+					</form>
+				{% endif %} 
 			{% elif execution.status == "C" or execution.status == "Q"  %}
 				{% comment %} <a href="{% url 'free:execution' execution.id%}"><button class='ui button'>{% trans 'Continue execution'%}</button></a> {% endcomment %}
 				<form action="" method="POST" id="form">{% csrf_token %}
@@ -114,7 +128,7 @@
 		
 
 		{% if execution.status == "C" or execution.status == "Q" or execution.status == "F"%}
-		<iframe src="{% url 'free:execution' execution.id %}" title="Execution" width="100%" height="900" style="">
+		<iframe src="{% url 'free:execution' execution.id %}" title="execution" width="100%" height="900" id="iframe_execution" >
 		</iframe>
 		{% endif %}
 
@@ -122,17 +136,48 @@
 {% endblock %}
 
 {% block script %}
-<script src="{% static 'free/js/configuration-input.js' %}"></script>
-<script src="{% static 'free/js/buttonsFREE.js' %}"></script>
 <script type='text/javascript'>
-	document.getElementById("configuration-input").style.display = "none";
-	const config_input = new ConfigurationInput("configuration-input");
-	window.addEventListener('message', function(event) {
-		console.log("Message received from the child: " + event.data); // Message received from child
-		if(event.data === "finished"){
+	const iframe = document.getElementById("iframe_execution")
+	if(iframe != null){
+		iframe.addEventListener("load", function(){
+			setInterval(check_finished, 500);
+		});
+	}
+
+	function check_finished(){
+		aux = window.frames[0].window.execution_status
+		if (aux == 'F'){
 			$("#continueButton").removeClass("disabled");
 		}
-	  });
+	}
+
+	function create_experiment(){
+		form_config = {R: 2, Iteration:20 }
+		endpoint= "/api/v1/execution";
+		method_queue = 'post';
+		data_send = {"apparatus": apparatus_id, "protocol": protocol_id};
+		data_send["config"] = form_config;
+		data_send["name"] = "";
+		data_send["quiz"] = quiz_id;
+
+		HEADERS = {
+			"X-CSRFToken": X_CSRFToken,
+		}
+
+		console.log('JSON : ' +  endpoint);
+    	console.log(JSON.stringify(data_send));
+		
+		axios({
+			method: method_queue, //you can set what request you want to be
+			url: endpoint,
+			headers: HEADERS,
+			data: data_send,
+		}).then(response => {
+			window.location.reload();
+			popup_message("experiment sucessfully created")
+
+		}).catch(console); 
+		}
 </script>
 
 

@@ -33,6 +33,7 @@ class Apparatus(models.Model):
     video_config = models.JSONField(_('Video configuration'), null=True, blank=True)
     last_online = models.DateTimeField(_('Last ping'), auto_now=True)
     image = models.ImageField(upload_to='apparatus/', default='apparatus/missing_image.jpg')
+    parameters = models.JSONField(_('Parameters'), default=dict, blank=True)
 
     def __str__(self):
         return _('%(apparatus_type)s in %(location)s') % {'apparatus_type': self.apparatus_type.name, 'location': self.location}

@@ -50,7 +50,7 @@ class QuizListTable(Table):
     class Meta:
         model = Quiz
         fields = ['title', 'category', 'exam_paper', 'single_attempt']    
-        
+
 class QuizListView(SingleTableView):
     template_name = 'quiz_mc/quiz_list.html'
     table_class = QuizListTable
@@ -61,11 +61,12 @@ class SittingListTable(Table):
     max_score = Column(accessor='get_max_score',verbose_name='Max Score')
     percent = Column(accessor='get_percent_correct',verbose_name='Percent')
     attempt = Column(accessor='id',verbose_name='Attempt #')
-    
+
     class Meta:
         model = Sitting
-        fields = ['attempt','quiz_title', 'current_score', 'max_score', 'percent']    
-        
+        fields = (
+            ['attempt','quiz_title', 'current_score', 'max_score', 'percent'])    
+
 class SittingListView(SingleTableView):
     template_name = 'quiz_mc/progress_list.html'
     table_class = SittingListTable
@@ -74,7 +75,9 @@ class SittingListView(SingleTableView):
 
     def get_context_data(self, **kwargs):
         context = super(SittingListView,self).get_context_data(**kwargs)
-        context['table_incomplete'] = QuizIncompletePListTable(Sitting.objects.filter(user=self.request.user,complete=False),prefix="1-")
+        context['table_incomplete'] = (
+            QuizIncompletePListTable(Sitting.objects.filter
+            (user=self.request.user,complete=False),prefix="1-"))
         return context
 
 #######################################
@@ -84,7 +87,7 @@ class QuizIncompletePListTable(Table):
     q_left = Column(accessor='questions_left',verbose_name='Questions Left')
     q_total = Column(accessor='get_max_score',verbose_name='Total Questions')
     category = Column(accessor='category',verbose_name='Category')
-    
+
     class Meta:
         model = Sitting
         fields = ['user','quiz','category','q_left','q_total']    
@@ -149,7 +152,7 @@ class QuizUserProgressView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(QuizUserProgressView, self).get_context_data(**kwargs)
-        progress, c = Progress.objects.get_or_create(user=self.request.user)
+        progress, _ = Progress.objects.get_or_create(user=self.request.user)
         context['cat_scores'] = progress.list_all_cat_scores
         context['exams'] = progress.show_exams()
         return context
@@ -209,8 +212,10 @@ class QuizTake(FormView):
             self.logged_in_user = self.request.user.is_authenticated
 
         if self.logged_in_user:
-            self.sitting = Sitting.objects.unsent_sitting(request.user,self.quiz)
-            if self.sitting is False or self.request.session.get('lti_login') == None:
+            self.sitting = (
+                Sitting.objects.unsent_sitting(request.user,self.quiz))
+            if (self.sitting is False 
+                or self.request.session.get('lti_login') is None):
                 self.sitting = Sitting.objects.user_sitting(request.user,
                                                         self.quiz)
             else:
@@ -223,18 +228,18 @@ class QuizTake(FormView):
                     'sitting': self.sitting,
                     'score_send': score_send,
                 }
-                if (self.request.session.get('lti_login') != None):
+                if self.request.session.get('lti_login') is not None:
                     results['lti'] = True
                 else:
                     results['lti'] = False
-                return render(request,self.not_submited_template_name,results)                                           
+                return render(request,self.not_submited_template_name,results)
         else:
             self.sitting = self.anon_load_sitting()
 
         if self.sitting is False:
             return render(request, self.single_complete_template_name)
 
-        return super(QuizTake, self).dispatch(request, *args, **kwargs)     
+        return super(QuizTake, self).dispatch(request, *args, **kwargs)
 
     def get_form(self, *args, **kwargs):
         if self.logged_in_user:
@@ -267,8 +272,8 @@ class QuizTake(FormView):
                 return self.final_result_anon()
 
         self.request.POST = {}
-        
-        
+
+
         return super(QuizTake, self).get(self, self.request)
 
     def get_context_data(self, **kwargs):
@@ -276,12 +281,16 @@ class QuizTake(FormView):
         context['question'] = self.question
         context['quiz'] = self.quiz
         context['execution'] = self.sitting.execution
-        if (self.request.session.get('lti_login') != None):
+        context['sub_category'] = str(self.question.sub_category)
+        context['decimal_cases'] = self.sitting.decimal_precision
+
+        context['base'] = "base.html"
+
+        if self.request.session.get('lti_login') is not None:
+
             context['lti'] = True
         else:
             context['lti'] = False
-        if(self.sitting.execution != None):
-            print(self.sitting.execution.pk)
 
         if hasattr(self, 'previous'):
             context['previous'] = self.previous
@@ -290,15 +299,43 @@ class QuizTake(FormView):
         #pendulum = 1, montecarlo = 2 both in aparatus and in category
         context['execution_json'] = {}
         context['final_result'] = {}
-        context['apparatus'] = Apparatus.objects.get(pk=self.question.category.pk) 
-        context['protocol'] = Protocol.objects.get(pk=self.question.category.pk)
+        context['apparatus'] = (
+            Apparatus.objects.get(pk=self.question.category.pk))
+        context['protocol'] = (
+            Protocol.objects.get(pk=self.question.category.pk))
+        self.sitting.decimal_precision = random.randint(3,7)
+        self.sitting.save()
         return context
 
     def form_valid_user(self, form):
-        progress, c = Progress.objects.get_or_create(user=self.request.user)
+        progress, _ = Progress.objects.get_or_create(user=self.request.user)
         guess = form.cleaned_data['answers']
-        if self.question.__class__ is Essay_Question: 
-            is_correct = self.question.check_if_correct(guess,self.sitting.execution)
+        if self.request.POST.get('apparatus_id') != None:
+            id = self.request.POST.get('apparatus_id')
+            random_exec = self.get_random_execution(int(id))
+            random_result = Result.objects.get(execution=random_exec.pk,result_type='f')
+
+            print("random exec:",random_exec.pk)
+            print("randomresult:", random_result.pk)
+        
+            random_exec.pk = None
+            random_exec.user = self.sitting.user
+            random_exec.save()
+            self.sitting.execution = random_exec
+            
+            random_result.pk = None
+            random_result.execution = random_exec
+            random_result.save()
+
+            
+            print("random exec:",random_exec.pk)
+            print("randomresult:", random_result.pk)
+            
+
+        if self.question.__class__ is Essay_Question:
+            is_correct = (
+                self.question.check_if_correct(guess,self.sitting.execution
+                                               ,self.sitting.decimal_precision))
         else:
             is_correct = self.question.check_if_correct(guess)
 
@@ -334,7 +371,7 @@ class QuizTake(FormView):
             'score_send': score_send,
         }
         self.sitting.mark_quiz_complete()
-        if (self.request.session.get('lti_login') != None):
+        if self.request.session.get('lti_login') is not None:
             results['lti'] = True
         else:
             results['lti'] = False
@@ -347,10 +384,17 @@ class QuizTake(FormView):
 
         if self.quiz.exam_paper is False:
             self.sitting.delete()
-        
+
         return render(self.request, self.result_template_name, results)
 
-    
+    def get_random_execution(self,appar_id):
+        print("random execution")
+        print("appar_id",appar_id)
+        exe_query = Execution.objects.filter(protocol_id=appar_id,status='F')
+        pks = list(exe_query.values_list('id',flat=True))
+        random_pk = random.choice(pks)
+        print("random pk:", random_pk)
+        return exe_query.get(pk=random_pk)
 
     def anon_load_sitting(self):
         if self.quiz.single_attempt is True:
@@ -402,7 +446,8 @@ class QuizTake(FormView):
 
     def form_valid_anon(self, form):
         guess = form.cleaned_data['answers']
-        is_correct = self.question.check_if_correct(guess,self.sitting.execution)
+        is_correct = (
+            self.question.check_if_correct(guess,self.sitting.execution))
 
         if is_correct:
             self.request.session[self.quiz.anon_score_id()] += 1
@@ -431,7 +476,7 @@ class QuizTake(FormView):
         max_score = len(q_order)
         percent = int(round((float(score) / max_score) * 100))
         session, session_possible = anon_session_score(self.request.session)
-        if score is 0:
+        if score == 0:
             score = "0"
         print("anon")
         results = {
@@ -460,6 +505,7 @@ class QuizTake(FormView):
         del self.request.session[self.quiz.anon_q_data()]
 
         return render(self.request, 'result.html', results)
+
 
 
 def anon_session_score(session, to_add=0, possible=0):

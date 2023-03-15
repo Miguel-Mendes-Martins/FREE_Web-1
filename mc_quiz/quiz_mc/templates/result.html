@@ -87,7 +87,7 @@
 
     {% for question in questions %}
 
-    {%if question.sub_category == None%}
+    {%if question.sub_category == None %}
 
         <p class="lead">
       {{ question.content }}
@@ -99,15 +99,30 @@
         <p>{% trans "Your answer" %}: {{ question|answer_choice_to_string:question.user_answer }}</p>
         {% endif %}
 
-      {% if question.explanation %}
+      {% comment %} {% if question.explanation %}
       <p><strong>{% trans "Explanation" %}:</strong></p>
       <div class="well " style="background-color: #fcf8e3;">
       <p>{{ question.explanation|safe }}</p>
       </div>
+      {%endif%} {% endcomment %}
+
+      {% if question.explanation %}
+      <p><strong>{% trans "Explanation" %}:</strong></p>
+        {% if question.pk in incorrect_questions %}
+          <div class="well " style="background-color: #bc544b;">
+        {% else %}
+          <div class="well " style="background-color: #99edc3;">
+        {% endif %}
+      <p>{{ question.explanation|safe }}</p>
+      </div>
       {%endif%}
+
       <hr>
       {% endif %}
   {% endfor %}
+
+
+  
 
   {% endif %}
 

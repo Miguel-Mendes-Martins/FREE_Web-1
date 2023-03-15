@@ -15,6 +15,7 @@ from django.conf import settings
 from model_utils.managers import InheritanceManager
 
 from free.models import *
+import random
 
 class CategoryManager(models.Manager):
 
@@ -62,7 +63,7 @@ class SubCategory(models.Model):
         verbose_name_plural = _("Sub-Categories")
 
     def __str__(self):
-        return self.sub_category + " (" + self.category.category + ")"
+        return self.sub_category
 
 
 @python_2_unicode_compatible
@@ -193,11 +194,13 @@ class Progress(models.Model):
     Data stored in csv using the format:
         category, score, possible, category, score, possible, ...
     """
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name=_("User"), on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL,
+                                 verbose_name=_("User"), 
+                                 on_delete=models.CASCADE)
 
     score = models.CharField(max_length=1024,
                              verbose_name=_("Score"),
-                             validators=[validate_comma_separated_integer_list])
+                            validators=[validate_comma_separated_integer_list])
 
     objects = ProgressManager()
 
@@ -354,9 +357,11 @@ class SittingManager(models.Manager):
 
     def unsent_sitting(self,user,quiz):
         try:
-            sitting = self.get(user=user, quiz=quiz, complete=True, sent_moodle=False)
+            sitting = self.get(user=user, quiz=quiz,
+                               complete=True, sent_moodle=False)
         except Sitting.MultipleObjectsReturned:
-            sitting = self.filter(user=user, quiz=quiz, complete=True, sent_moodle=False).last()
+            sitting = self.filter(user=user, quiz=quiz, complete=True, 
+                                  sent_moodle=False).last()
         except Sitting.DoesNotExist:
             return False
         return sitting
@@ -381,11 +386,22 @@ class Sitting(models.Model):
     with the answer the user gave.
     """
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("User"), on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        verbose_name=_("User"), 
+        on_delete=models.CASCADE)
 
-    quiz = models.ForeignKey(Quiz, verbose_name=_("Quiz"), on_delete=models.CASCADE)
+    quiz = models.ForeignKey(
+        Quiz, 
+        verbose_name=_("Quiz"), 
+        on_delete=models.CASCADE)
 
-    execution = models.ForeignKey(Execution,verbose_name=_("Execution"), blank = True, null=True, on_delete=models.SET_NULL)
+    execution = models.ForeignKey(
+        Execution,
+        verbose_name=_("Execution"), 
+        blank = True, 
+        null=True, 
+        on_delete=models.SET_NULL)
 
     question_order = models.CharField(
         max_length=1024,
@@ -417,9 +433,15 @@ class Sitting(models.Model):
     end = models.DateTimeField(null=True, blank=True, verbose_name=_("End"))
 
     sent_moodle = models.BooleanField(default=False, blank=False,
-                                   verbose_name=_("Sent"))
+                                   verbose_name=_("Sent")) 
 
     objects = SittingManager()
+
+    def randomize_decimal_precision():
+        return random.randint(3,7)
+    
+    decimal_precision = models.PositiveIntegerField(default=randomize_decimal_precision,
+                                            verbose_name=_("Decimal Precision"))
 
     class Meta:
         permissions = (("view_sittings", _("Can see completed exams.")),)
@@ -620,12 +642,21 @@ class Question(models.Model):
                                                "been answered."),
                                    verbose_name=_('Explanation'))
 
+    rounding = models.BooleanField(
+        blank=False, default=False,
+        verbose_name=_("Rounding"),
+        help_text=_("Will this question be rounded to a decimal case"))
+    
+    priority = models.PositiveIntegerField(
+        blank=True, null=True, verbose_name=_("Priority"),
+        help_text=_("Question priority to show in quiz, smaller means bigger priority"))
+
     objects = InheritanceManager()
 
     class Meta:
         verbose_name = _("Question")
         verbose_name_plural = _("Questions")
-        ordering = ['category']
+        ordering = ['category','priority']
 
     def __str__(self):
         return self.content

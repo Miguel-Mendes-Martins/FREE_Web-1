@@ -20,11 +20,6 @@ urlpatterns = [
         view=SittingListView.as_view(),
         name='quiz_incomplete'),
 
-    # path('access/',HomeView.as_view(),name='home'),
-    # path('access/list',ExecutionListView.as_view(),name='exec_list'),
-    # path('access/result',ResultListView.as_view(),name='result_list'),
-    #path('category/',view=CategoriesListView.as_view(),name='quiz_category_list_all'),
-
     url(r'^category/$',
         view=CategoriesListView.as_view(),
         name='quiz_category_list_all'),

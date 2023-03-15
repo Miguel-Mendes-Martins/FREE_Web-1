@@ -12,7 +12,7 @@ urlpatterns = [
             LTICourseEnableView.as_view(), {}, 'lti-course-enable'),
     re_path(r'^landing/$', LTILandingPage.as_view(), {}, 'lti-landing-page'),
     re_path('^grade/$', LTIPostGrade.as_view(), {}, 'lti-post-grade'),
-    re_path(r'^submit/$', LTIGradeSubmit.as_view(), {}, 'lti-grade-submit'), #extra
+    re_path(r'^submit/$', LTIGradeSubmit.as_view(), {}, 'lti-grade-submit'),
     re_path(r'^$', LTIRoutingView.as_view(), {}, 'lti-login'),
     re_path(r'^assignment/(?P<assignment_name>.*)/(?P<pk>\d+)/$',
             LTIRoutingView.as_view(), {}, 'lti-assignment-view'),

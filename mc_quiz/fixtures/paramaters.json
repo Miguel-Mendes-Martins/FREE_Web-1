@@ -1,0 +1,97 @@
+{
+    "cable": {
+        "length": 2824.0,
+        "error": 0.5,
+        "temperature":""
+    },
+    "mass": { 
+        "weight": 2,
+        "eror": 0.075
+    },
+    "coordinates": [
+        -74.05,
+        4.6
+    ],
+    "altitude": 2500,
+    "diameter": {
+        "dimension":82.0,
+        "error":0.1
+    },
+    "shear_modulus": "40-60",
+    "elasticity": 200,
+    "thermal_expansion": "14E-6"
+}
+
+{
+    "cable": {
+        "length": 2826.8,
+        "error": 0.5,
+        "temperature": "26ºC"
+    },
+    "mass": { 
+        "weight": 2,
+        "eror": 0.075
+    },
+    "coordinates": [
+        -47.866667,
+        -15.766667
+    ],
+    "altitude": 1034,
+    "diameter": {
+        "dimension":81.4,
+        "error":0.1
+    },
+    "shear_modulus": "40-60",
+    "elasticity": 200,
+    "thermal_expansion": "14E-6"
+}
+
+{
+    "cable": {
+        "length": 2800.0,
+        "error": 0.5,
+        "temperature": "35ºC"
+    },
+    "mass": { 
+        "weight": 2,
+        "eror": 0.075
+    },
+    "coordinates": [
+        -79.616667,
+        9.016667
+    ],
+    "altitude": 130,
+    "diameter": {
+        "dimension":81.8,
+        "error":0.1
+    },
+    "shear_modulus": "40-60",
+    "elasticity": 200,
+    "thermal_expansion": "14E-6"
+}
+
+{
+    "cable": {
+        "length": 2837.25,
+        "error": 0.5,
+        "temperature": "27ºC"
+    },
+    "mass": { 
+        "weight": 2,
+        "eror": 0.075
+    },
+    "coordinates": [
+        -8.558611,
+        125.573889
+    ],
+    "altitude": 10,
+    "diameter": {
+        "dimension":80.8,
+        "error":0.1
+    },
+    "shear_modulus": "40-60",
+    "elasticity": 200,
+    "thermal_expansion": "14E-6"
+}
+
+

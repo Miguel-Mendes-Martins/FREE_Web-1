@@ -15,7 +15,9 @@ class LoginView(auth_views.LoginView):
                 continue
             try:
                 my_class = locate(b)
-                auth_backends.append({ 'classname':my_class.name, 'name': my_class.name.replace('-', " ").upper()})
+                auth_backends.append(
+                    { 'classname':my_class.name, 
+                    'name': my_class.name.replace('-', " ").upper()})
             except:
                 pass
 
