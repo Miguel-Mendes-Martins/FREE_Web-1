@@ -43,7 +43,6 @@ class ExecutionView(LoginRequiredMixin, TemplateView):
 class ApparatusVideoView(LoginRequiredMixin, DetailView):
     template_name = 'free/apparatus_video.html'
     def get_queryset(self):
-        print(self.kwargs['pk'])
         return Apparatus.objects.filter(id=self.kwargs['pk'])
         #.get(pk=self.kwargs['pk'])
 
@@ -69,7 +68,6 @@ class CreateExecutionView(LoginRequiredMixin, TemplateView):
         return context
 
     def get_template_names(self):
-        print(self.apparatus.apparatus_type.slug)
         return ['free/experiments/' + self.apparatus.apparatus_type.slug + '.html']
 
 

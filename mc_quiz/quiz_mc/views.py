@@ -314,9 +314,6 @@ class QuizTake(FormView):
             id = self.request.POST.get('apparatus_id')
             random_exec = self.get_random_execution(int(id))
             random_result = Result.objects.get(execution=random_exec.pk,result_type='f')
-
-            print("random exec:",random_exec.pk)
-            print("randomresult:", random_result.pk)
         
             random_exec.pk = None
             random_exec.user = self.sitting.user
@@ -326,11 +323,6 @@ class QuizTake(FormView):
             random_result.pk = None
             random_result.execution = random_exec
             random_result.save()
-
-            
-            print("random exec:",random_exec.pk)
-            print("randomresult:", random_result.pk)
-            
 
         if self.question.__class__ is Essay_Question:
             is_correct = (
@@ -388,12 +380,9 @@ class QuizTake(FormView):
         return render(self.request, self.result_template_name, results)
 
     def get_random_execution(self,appar_id):
-        print("random execution")
-        print("appar_id",appar_id)
         exe_query = Execution.objects.filter(protocol_id=appar_id,status='F')
         pks = list(exe_query.values_list('id',flat=True))
         random_pk = random.choice(pks)
-        print("random pk:", random_pk)
         return exe_query.get(pk=random_pk)
 
     def anon_load_sitting(self):
@@ -478,7 +467,6 @@ class QuizTake(FormView):
         session, session_possible = anon_session_score(self.request.session)
         if score == 0:
             score = "0"
-        print("anon")
         results = {
             'score': score,
             'max_score': max_score,

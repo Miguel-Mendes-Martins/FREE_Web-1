@@ -70,7 +70,6 @@ class LTIBackend(object):
             return self.find_or_create_user(request, lti)
         except LTIException as e:
             lti.clear_session(request)
-            print(e)
             return None
 
     def get_user(self, user_id):

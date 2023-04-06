@@ -88,7 +88,6 @@ class LTIRoutingView(LTIAuthMixin, View):
         return url
 
     def post(self, request, assignment_name=None, pk=None):
-        print(request.POST)
         if request.POST.get('ext_content_intended_use', '') == 'embed':
             domain = self.request.get_host()
             url = '%s://%s/%s?return_url=%s' % (
@@ -113,7 +112,6 @@ class LTIRoutingView(LTIAuthMixin, View):
                 self.request.scheme, self.request.get_host())
         # custom parameters can be tacked on here
         url = self.add_custom_parameters(url)
-        print("before redirect:",url)
         self.request.session['lti_login'] = True
         return HttpResponseRedirect(url)
 
@@ -227,13 +225,10 @@ class LTIPostGrade(LTIAuthMixin, View):
             # Is 500 the right thing to do here?
             raise LTIPostMessageException('Post grade failed')
         else:
-            print(request.POST)
-            print("hey:",request.POST.get('sitting_pk'))
             msg = ('Your score was submitted. Great job!')
             messages.add_message(request, messages.INFO, msg)
             #confirm submition:
             sit = Sitting.objects.get(pk=request.POST.get('sitting_pk'))
             sit.mark_quiz_sent_moodle()
-            print("soul sister")
 
             return HttpResponseRedirect(redirect_url)

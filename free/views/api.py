@@ -114,7 +114,6 @@ class ExecutionConfigure(generics.CreateAPIView):
                 != "execution" ):
                 exec_id = serializer['id'].value
                 quiz = self.request.META.get('HTTP_REFERER').split("/")[-3]
-                print("quiz:",quiz)
                 sitting = Sitting.objects.get(
                     quiz=Quiz.objects.get(url=quiz),
                     user=self.request.user, 
