@@ -1,0 +1,113 @@
+{% extends 'free/base.html' %}
+{% load static %}
+{% load i18n %}
+{% block title %}{% trans "All Quizzes" %}{% endblock %}
+
+{% block head %}
+{% endblock %}  
+
+{% block content %}
+    <!--content of this page-->
+    <div class="right floated thirteen wide computer sixteen wide phone column" id="content">
+        <div class="ui container grid">
+            <div class="row">
+                <div class="fifteen wide computer sixteen wide phone centered column">
+                    <h2><i class="home icon"></i>{% trans 'List of Quizzes' %}</h2>
+                    
+                        <div class="right floated thirteen wide computer sixteen wide phone column" id="content">
+                            <div class="ui container grid">
+                                <div class="row">
+                                    <div class="fifteen wide computer sixteen wide phone centered column">
+                                        
+                                        <div class="ui divider"></div>
+                                        <div class="ui grid">
+                                            <!--<div class="sixteen wide computer sixteen wide phone centered column">-->
+                                                <h4></h4>
+    
+                                                <!-- BEGIN DATATABLE -->
+                                                <div class="ui stacked segment">
+                                                    <div class="ui blue ribbon icon label">{% trans 'List of your quizzes' %}</div>
+                                                    <br><br>
+                                                    {% if quiz_list %}
+														<table class="table table-bordered table-striped" style="width:200%">
+														<thead>
+															<tr>
+															<th>{% trans "Title" %}</th>
+															<th>{% trans "Category" %}</th>
+															<th>{% trans "Exam" %}</th>
+															<th>{% trans "Single attempt" %}</th>
+															<th></th>
+															</tr>
+														</thead>
+														<tbody>
+														{% for quiz in quiz_list %}
+															<tr>
+															<td>{{ quiz.title }}</td>
+															<td>{{ quiz.category }}</td>
+															<td>{{ quiz.exam_paper }}</td>
+															<td>{{ quiz.single_attempt }}</td>
+															<td>
+																<a href="{% url 'mc_quiz:quiz_start_page' slug=quiz.url %}">
+																{% trans "View details" %}
+																</a>
+															</tr>
+														{% endfor %}
+														</tbody>
+														</table>
+													{% else %}
+														<p>{% trans "There are no available quizzes" %}.</p>
+													{% endif %}
+                                                </div>
+                                                <!-- END DATATABLE -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% comment %} {% block content %}
+<h2>{% trans "List of quizzes" %}</h2>
+    {% if quiz_list %}
+		<table class="table table-bordered table-striped">
+
+		  <thead>
+			<tr>
+			  <th>{% trans "Title" %}</th>
+			  <th>{% trans "Category" %}</th>
+			  <th>{% trans "Exam" %}</th>
+			  <th>{% trans "Single attempt" %}</th>
+			  <th></th>
+			</tr>
+		  </thead>
+
+		  <tbody>
+
+        {% for quiz in quiz_list %}
+
+  			<tr>
+			  <td>{{ quiz.title }}</td>
+			  <td>{{ quiz.category }}</td>
+			  <td>{{ quiz.exam_paper }}</td>
+			  <td>{{ quiz.single_attempt }}</td>
+			  <td>
+				<a href="{% url 'mc_quiz:quiz_start_page' slug=quiz.url %}">
+				  {% trans "View details" %}
+				</a>
+			</tr>
+
+        {% endfor %}
+		  </tbody>
+
+		</table>
+
+	{% else %}
+        <p>{% trans "There are no available quizzes" %}.</p>
+    {% endif %}
+{% endblock %} {% endcomment %}

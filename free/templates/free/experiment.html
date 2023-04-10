@@ -1,4 +1,4 @@
-{% extends 'free/base.html' %}
+{% extends base %}
 {% load static %}
 {% load i18n %}
 
@@ -206,7 +206,7 @@ var apparatus_video_window
 
 function open_video_window(){
     if(apparatus_video_window == undefined)
-        apparatus_video_window = window.open("{% url "free:apparatus-Video" apparatus.id %}", "_blank", "popup")
+        apparatus_video_window = window.open("{% url 'free:apparatus-Video' apparatus.id %}", "_blank", "popup")
 }
 
 function close_video_window(){
@@ -676,6 +676,8 @@ function retrieve_execution_configuration(){
 		}
 	}
 	else {
+        console.log("aaa")
+        console.log(i.attr("id"))
 		i = $(input_list[ind]);
 		form_config[i.attr("id")] = evaluted_type(i);
     	}
@@ -731,8 +733,8 @@ function save_experiment() {
   
 function create_experiment() {
     form_config = retrieve_execution_configuration();
+    console.log("form_config:");
     console.log(form_config );
-
 
     endpoint="/api/v1/execution";
     method_queue = 'post';
@@ -756,6 +758,7 @@ function create_experiment() {
     // print out
     console.log('JSON : ' +  endpoint);
     console.log('JSON : ' +  data_send);
+    console.log(JSON.stringify(data_send));
   
   
     axios({

@@ -23,6 +23,14 @@ class ExecutionView(LoginRequiredMixin, TemplateView):
         context['execution_json'] = ExecutionSerializer(self.execution).data
         context['apparatus'] = self.execution.apparatus
         context['protocol'] = self.execution.protocol
+        if (self.request.META.get('HTTP_REFERER') != None):
+            context['source'] = self.request.META.get('HTTP_REFERER').split("/")[3]
+            if self.request.META.get('HTTP_REFERER').split("/")[3] == "mc_quiz":
+                context['base'] = "free/base_stripped.html"
+            else:
+                context['base'] = "free/base.html"
+        else: 
+            context['base'] = "free/base.html"
         try:
             context['final_result'] = ResultSerializer(Result.objects.get(result_type='f', execution=self.execution)).data
         except:
@@ -35,7 +43,6 @@ class ExecutionView(LoginRequiredMixin, TemplateView):
 class ApparatusVideoView(LoginRequiredMixin, DetailView):
     template_name = 'free/apparatus_video.html'
     def get_queryset(self):
-        print(self.kwargs['pk'])
         return Apparatus.objects.filter(id=self.kwargs['pk'])
         #.get(pk=self.kwargs['pk'])
 
@@ -47,6 +54,7 @@ class CreateExecutionView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         apparatus_id = kwargs['apparatus_id']
         protocol_id = kwargs['protocol_id']
+        context['base'] = "free/base.html"
 
         self.apparatus = get_object_or_404(Apparatus, pk=apparatus_id)
 

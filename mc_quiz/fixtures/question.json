@@ -1,0 +1,16 @@
+[
+{
+    "model": "essay_mc.essay_question",
+    "pk": 1,
+    "fields": {
+        "verif_function": ""
+    }
+},
+{
+    "model": "essay_mc.essay_question",
+    "pk": 2,
+    "fields": {
+        "verif_function": "area_approximation"
+    }
+}
+]

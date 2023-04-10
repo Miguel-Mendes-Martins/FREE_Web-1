@@ -69,6 +69,12 @@ INSTALLED_APPS = [
     'cavity',
     'planck',
     'colisione',
+    #Quiz apps
+    'mc_quiz.quiz_mc',
+    'mc_quiz.multichoice_mc',
+    'mc_quiz.true_false_mc',
+    'mc_quiz.essay_mc',
+    'lti_provider',
 ]
 
 MIDDLEWARE = [
@@ -84,6 +90,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'freeweb.urls'
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 TEMPLATES = [
     {
@@ -286,6 +294,39 @@ if env.bool('FREE_FENIX_OAUTH'):
     SOCIAL_AUTH_FENIX_AUTH_KEY=env.str('SOCIAL_AUTH_FENIX_AUTH_KEY')
     SOCIAL_AUTH_FENIX_AUTH_SECRET=env.str('SOCIAL_AUTH_FENIX_AUTH_SECRET')
 
+if env.bool('FREE_LTI_PROVIDER'):
+
+    AUTHENTICATION_BACKENDS += ('lti_provider.auth.LTIBackend',)
+
+    LTI_TOOL_CONFIGURATION = {
+        'title': '<your lti provider title>',
+        'description': '<your description>',
+        'launch_url': 'lti/',
+        'embed_url': '', #'<the view endpoint for an embed tool>' 
+        'embed_icon_url': '', #'<the icon url to use for an embed tool>' 
+        'embed_tool_id': '', #'<the embed tool id>'
+        'landing_url': '/', #<the view landing page>
+        'course_aware': False,
+        'course_navigation': True,
+        'new_tab': False,
+        'frame_width': 2048,
+        'frame_height': 2048,
+        'custom_fields': '',
+        'allow_ta_access': True,
+        'assignments': {
+            'mc_quiz': 'mc_quiz/',
+            '<name>': '<landing_url>',
+            '<name>': '<landing_url>',
+            },
+    }
+
+PYLTI_CONFIG = {
+    'consumers': {
+        'abcdefghijklmnopqrst': {
+            'secret': 'uvwxyz1234567890ABCD'
+        }
+    }
+}
 
 JANUS_SERVER_ADDRESS=env.str('JANUS_SERVER_ADDRESS')
 JANUS_STREAM_ADMIN_KEY = env.str('JANUS_STREAM_ADMIN_KEY')

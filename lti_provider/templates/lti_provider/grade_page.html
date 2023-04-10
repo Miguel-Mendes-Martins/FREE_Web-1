@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" media="screen" />
+    </head>
+    <body>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="container">
+                    <div class="jumbotron">
+                        <h2>Custom Grade Submition Page {{landing_url}}</h2>
+                        <form action="{% url 'lti_provider:lti-post-grade'%}"  method="post">{% csrf_token %}
+                            <label for="your_name">Your name: </label>
+                            <input type=hidden name="score" value="0.7">
+                            <input type=hidden name="launch_url" value="http://172.20.0.1/">
+                            <input type=hidden name="next" value="/mc_quiz/">
+                            <input type="submit" value="OK">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div> 
+    </body>
+</html>

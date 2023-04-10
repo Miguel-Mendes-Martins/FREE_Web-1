@@ -1,0 +1,30 @@
+{% extends 'free/base.html' %}
+{% load i18n %}
+{% load django_tables2 %}
+
+{% block title %} {% trans 'List of Quizzes' %} {% endblock %}
+
+{% block content %}
+
+    <div class="right floated thirteen wide computer sixteen wide phone column" id="content">
+        <div class="ui container grid">
+            <div class="row"><div class="fifteen wide computer sixteen wide phone centered column">
+    
+                <div class="fifteen wide computer sixteen wide phone centered column">
+                    
+                    <h2><i class="table icon"></i>{% trans 'List of Quizzes' %}</h2>
+                    <div class="ui divider"></div>
+                    <div class="ui grid">       
+                        <div class="ui stacked segment">
+                            <div class="ui green ribbon icon label">{% trans 'List of available Quizzes'%}</div>
+                            <div class="ui divider"></div>
+
+                            {% render_table table %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
