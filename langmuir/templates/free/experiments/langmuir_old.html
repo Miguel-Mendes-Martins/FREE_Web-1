@@ -1,0 +1,871 @@
+{% extends 'free/experiment.html' %}
+{% load static %}
+{% load i18n %}
+
+
+{% block experiment_head %}
+    <!-- pendulum libraries -->
+    
+
+     <!-- slider  -->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.8.4/components/slider.min.js"></script>
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.8.4/components/slider.min.css">
+ 
+    <!-- pendulum libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+ 
+     <!--<script src="https://cdn.jsdelivr.net/npm/chart.js@3.8.0/dist/chart.min.js"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/1.4.0/chartjs-plugin-annotation.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/1.2.1/chartjs-plugin-zoom.min.js"></script>
+    <script src="https://unpkg.com/chartjs-chart-error-bars@3.7.2/build/index.umd.min.js"></script>
+    <script src="https://d3js.org/d3-array.v3.min.js"></script>
+
+
+{% endblock %}  
+
+
+{% block configtab %}
+<!-- Begin of the configuration tab-->
+    
+    
+        <div class="ui two column grid container">
+            <div class="column">
+                <div class="ui segment">
+                    <legend> <h3>{% trans 'Sweeping Voltage [Vpp]'%}</h3></legend>
+                    <div style="padding-top: 5%;"  class="ui blue small bottom aligned labeled  slider"  id="slider-max_duty" ></div>
+                        
+                        <div class="ui input" >
+                            <input class="free-input" type="number" id="max_duty">
+                        </div>
+                </div>
+            </div>
+            <div class="column">
+                <div class="ui segment">
+                    <legend><h3>{% trans 'Period for Sweeping Signal  [ms]'%}</h3></legend>
+                    <div style="padding-top: 5%;"  class="ui blue small bottom aligned labeled  slider" id="slider-sigperiod" ></div>
+                        
+                        <div class="ui input">
+                            <input class="free-input" type="number" id="sigperiod">
+                        </div>
+                </div>
+            </div>
+        </div>
+		<!-- 2 -->
+        <div class="ui two column grid container">
+            <div class="column">
+                <div class="ui segment">
+                    <legend> <h3>{% trans 'Number of Samples per Period'%}</h3></legend>
+                    <div style="padding-top: 5%;"  class="ui blue small bottom aligned labeled slider"  id="slider-numsamps" ></div>
+                        
+                        <div class="ui input" >
+                            <input class="free-input" type="number" id="numsamps">
+                        </div>
+                </div>
+            </div>
+			
+			 <div class="column">
+                <div class="ui segment">
+                    <legend> <h3>{% trans 'Number of Periods '%}</h3></legend>
+                    <div style="padding-top: 5%;"  class="ui blue small bottom aligned labeled slider"  id="slider-numperiod" ></div>
+                        
+                        <div class="ui input" >
+                            <input class="free-input" type="number" id="numperiod">
+                        </div>
+                </div>
+            </div>
+           
+        </div>
+		<!--3-->
+		<div class="ui two column grid container">
+            <div class="column">
+                <div class="ui segment">
+                    <legend> <h3>{% trans 'Gas Injection Time [ms]'%}</h3></legend>
+                    <div style="padding-top: 5%;"  class="ui blue small bottom aligned labeled slider"  id="slider-pressure" ></div>
+                        
+                        <div class="ui input" >
+                            <input class="free-input" type="number" id="pressure">
+                        </div>
+                </div>
+            </div>
+			
+			 <div class="column">
+                <div class="ui segment">
+                    <legend> <h3>{% trans 'Gas Selection'%}</h3></legend>
+					
+                    <div class="field" id="radio">
+                        <div class="ui  blue radio checkbox langmuir">
+                             <input  class="free-input"  type="radio" id="gas_selector" name="gas_type" checked="checked"  value="1">
+                                 <label>Helium</label>
+                        </div>
+						
+                        <div class="field">
+                            <div class="ui radio checkbox langmuir">
+                                <input  class="free-input"  type="radio" id="gas_selector" name="gas_type"  value="2">
+                                    <label>Nitrogen</label>
+                            </div>
+                        </div>		
+						
+					    <div class="field">
+                            <div class="ui radio checkbox langmuir">
+                                <input  class="free-input"  type="radio" id="gas_selector" name="gas_type"  value="3">
+                                    <label>Argon</label>
+                            </div>
+                        </div>
+							 
+				    </div>
+                </div>
+            </div>
+           
+        </div>
+		<!--4-->
+		<div class="ui two column grid container">
+            <div class="column">
+                <div class="ui segment">
+                    <legend> <h3>{% trans 'Background Pressure [Pa]'%}</h3></legend>
+                    <div style="padding-top: 5%;"  class="ui blue small bottom aligned labeled  slider"  id="slider-pump_press" ></div>
+                        
+                        <div class="ui input" >
+                            <input class="free-input" type="number" id="pump_press">
+                        </div>
+                </div>
+            </div>
+           
+        </div>
+		
+		
+		
+<!-- End of the configuration tab-->
+{% endblock %}
+
+
+
+<!-- Begin of the execution tab-->
+{% block executiontab %}
+<div class="ui grid stackable">
+    <div class="row">
+        <div class=" ten wide column">
+            <h3>Current vs Voltage</h3>
+                <div >
+                    <canvas id="plot_current_voltage"></canvas>
+                </div>
+        </div>
+   
+    </div>
+	
+    <div class="row">
+        
+        <div class="eight wide column">
+            <h3>Voltage vs Time</h3>
+                <div >
+                    <canvas id="plot_voltage_time"></canvas>
+                </div>
+        </div>
+        <div class="eight wide column">
+            <h3>Current vs Time</h3>
+                <div >
+                    <canvas id="plot_current_time"></canvas>
+                </div>
+        </div>
+    </div>
+	
+	<div class="row">
+        <div class=" ten wide column">
+            <h3>Pressure vs Time</h3>
+                <div >
+                    <canvas id="plot_pressure_time"></canvas>
+                </div>
+        </div>
+   
+    </div>
+	
+	
+</div>
+
+    <table id="results_table" class="ui celled table display" style="width:100%">
+        <thead>
+            <tr>
+                <th id="time">{% trans "Time" %}</th>
+                <th id="adc_value1">{% trans "Voltage [V]" %}</th>
+                <th id="adc_value2">{% trans "Current[uA]" %}</th>
+                <th id="adc_value3">{% trans "Pressure[mBar]" %}</th>
+            </tr>
+        </thead>
+    </table>
+{% endblock %}   
+<!-- End of the execution tab-->
+
+		
+{% block protocol_auxiliary_functions %}
+
+
+<script>
+    //var receive_error_velocity
+    //var receive_error_period
+
+    var plot_current_time
+    var plot_voltage_time
+    var plot_current_voltage
+    var plot_pressure_time
+	let data_value_p 
+	let data_value_i
+	let data_value_t 
+	let data_value_v 
+    //var period_data = []
+
+
+function process_final_data(data_line){
+
+
+}
+
+function process_experiment_data(data){
+	 //process_experiment_data_default(data);
+	//console.log("process_experiment_data");
+	for (line in data){
+        	//console.log(data[line])
+		if(data[line].result_type == 'p'){
+		data_value_t = data[line].value.map(data => data.time).filter(function (element) { 
+            		return element !== undefined;
+          	});
+		data_value_v = data[line].value.map(data => parseFloat(data.adc_value1)).filter(function (element) { 
+            		return element !== undefined;
+          	});
+		data_value_i = data[line].value.map(data => data.adc_value2).filter(function (element) { 
+            		return element !== undefined;
+          	});
+		data_value_p = data[line].value.map(data => parseFloat(data.adc_value3)*100).filter(function (element) { 
+            		return element !== undefined;
+          	});
+		process_partial_data(data_value_t,data_value_v,data_value_i,data_value_p);
+		table_insert_partial_data(data[line]);	
+		}	
+	}
+	
+	
+}
+
+let count_draw = 0
+
+function table_insert_partial_data(data){
+    
+    table_columns = jQuery( "#results_table > thead> tr> th" );
+    col_id = []
+    for ( ind = 0, len = table_columns.length; ind < len; ind++ ) {
+        col_id.push($(table_columns[ind]).attr("id"))
+    }
+    var t = $('#results_table').DataTable();
+	console.log("ooo");
+
+    data.value.map(data => {
+	row_data = []
+       col_id.forEach(c_id => {
+       		row_data.push(data[c_id])
+	});
+       t.row.add(row_data)
+       return row_data
+	} );
+
+    count_draw = count_draw +1;
+
+    if (count_draw >= data.value.length){
+	t.draw()
+       count_draw = 0
+    }
+
+    console.log(row_data)
+
+}
+
+
+
+function process_partial_data(time,voltage,current ,pressure){
+    //voltage = parseFloat(data_value_v) 
+    //current = parseFloat(data_value_)
+    //pressure = parseFloat(data_line.adc_value3)
+    //time = data_line.time
+
+    //console.log(voltage)
+    //console.log(typeof time)
+
+    //console.log("time: ")
+    //console.log(time)
+	plot_current_voltage.data.labels = plot_current_voltage.data.labels.concat(voltage);  
+	plot_current_voltage.data.datasets[0].data = plot_current_voltage.data.datasets[0].data.concat(current);
+
+        plot_current_voltage.update();
+
+    plot_voltage_time.data.labels = plot_voltage_time.data.labels.concat(time);  
+	plot_voltage_time.data.datasets[0].data = plot_voltage_time.data.datasets[0].data.concat(voltage);
+
+    plot_voltage_time.update();
+	
+	
+	plot_current_time.data.labels = plot_current_time.data.labels.concat(time);
+
+	plot_current_time.data.datasets[0].data = plot_current_time.data.datasets[0].data.concat(current);
+	//console.log("aqui:")
+	//console.log(plot_current_time.data)
+    plot_current_time.update();
+
+	plot_pressure_time.data.labels = plot_pressure_time.data.labels.concat(time);
+
+	plot_pressure_time.data.datasets[0].data = plot_pressure_time.data.datasets[0].data.concat(pressure);
+
+	plot_pressure_time.update();
+
+
+}
+
+
+
+function on_save_experiment_UI(){
+
+}
+
+
+
+
+function on_ready_experiment_UI(){
+
+    configure_slider("max_duty")
+    configure_slider("sigperiod")
+    configure_slider("numsamps")
+    configure_slider("numperiod")
+    configure_slider("pressure")
+    configure_radio()
+    configure_slider("pump_press")
+	
+	
+//	buildPlot1(0,'plot_current_voltage');
+ //   buildPlot2(0,'plot_voltage_time');
+  //  buildPlot3(0,'plot_current_time');
+//	buildPlot4(0, 'plot_pressure_time');
+	
+	
+    //receive_error_velocity = 0.1;
+   // receive_error_period = 0.0005;//response.data.value.e_period;
+
+
+
+    ctx = $("#plot_current_voltage")[0].getContext('2d');
+    plot_current_voltage = new Chart(ctx, {
+        type: 'scatter',
+	 labels: [],
+        data: {
+            datasets: [{
+                borderColor: "blue",
+                backgroundColor: "blue",
+                data: [ ],
+            },],
+        },
+	reponsive:true,
+        options: {
+            plugins: {
+                legend: {
+                    display: false,
+                }, 
+                autocolors: false,
+            },
+            scales: {
+                y: {
+                    title:{
+                        display: true, 
+                        text: gettext('Current [µA]'),
+                    }
+                  //  min: 8.5,
+                    //max: 9.5,
+                },
+                x: {
+                    title:{
+                        display: true, 
+                        text: gettext('Voltage[V]'),
+                    },
+                },
+            },
+        }
+    });
+
+    ctx = $("#plot_voltage_time")[0].getContext('2d');
+    plot_voltage_time = new Chart(ctx, {
+        type:  'line',
+	labels: [],
+        data: {
+            datasets: [{
+                borderColor: "blue",
+                backgroundColor: "blue",
+                data: [ ],
+            },],
+        },
+	responsive:true,
+        options: {
+            plugins: {
+                legend: {
+                    display: false,
+                }, 
+                autocolors: false,
+            },
+            scales: {
+                y: {
+                    title:{
+                        display: true, 
+                        text: gettext('Voltage [V]'),
+                    }
+                   // min: 8.5,
+                   // max: 9.5,
+                },
+				
+                x: {
+
+                    title:{
+                        display: true, 
+                        text: gettext('Elapsed Time[HH:MM:SS]'),
+                    },
+                },
+            },
+        }
+    });
+
+
+
+
+    ctx = $("#plot_current_time")[0].getContext('2d');
+    plot_current_time = new Chart(ctx, {
+        type: 'line',
+	labels: [],
+        data: {
+            datasets: [{
+                borderColor: "blue",
+                backgroundColor: "blue",
+                data: [ ],
+            },],
+        },
+        options: {
+            plugins: {
+                legend: {
+                    display: false,
+                }, 
+                autocolors: false,
+            },
+            scales: {
+                y: {
+                    title:{
+                        display: true, 
+                        text: gettext('Current [µA]'),
+                    }
+                  //  min: 8.5,
+                    //max: 9.5,
+                },
+                x: {
+                    title:{
+                        display: true, 
+                        text: gettext('Elapsed Time[HH:MM:SS]'),
+                    },
+                },
+            },
+        }
+    });
+
+    ctx = $("#plot_pressure_time")[0].getContext('2d');
+    plot_pressure_time = new Chart(ctx, {
+        type: 'line',
+        labels: [],
+        data: {
+            datasets: [{
+                borderColor: "blue",
+                backgroundColor: "blue",
+                data: [ ],
+            },],
+        },
+        options: {
+            plugins: {
+                legend: {
+                    display: false,
+                }, 
+                autocolors: false,
+            },
+            scales: {
+                y: {
+                    title:{
+                        display: true, 
+                        text: gettext('Pressure [Pa]'),
+                    }
+                  //  min: 8.5,
+                    //max: 9.5,
+                },
+                x: {
+                    title:{
+                        display: true, 
+                        text: gettext('Elapsed Time[HH:MM:SS]'),
+                    },
+                },
+            },
+        }
+    });
+
+
+}
+function configure_slider(name){
+        $('#slider-'+name).slider({
+            min:  protocol_input_arguments[name].minimum,
+            max: protocol_input_arguments[name].maximum, 
+            step: protocol_input_arguments[name].multipleOf,
+            start: protocol_input_arguments[name].default,
+            input: '#'+name,
+            onChange: function(value) {
+                console.log("QQQQQQQQQQQQQQQQQQ "+value)
+                $('#'+name).prop("value", value)
+                onInputChanged()
+                if ("relation" in protocol_input_arguments[name]){
+                    if(protocol_input_arguments[name].relation.type === "<"){
+                        if(parseInt($('#'+name).val()) < parseInt($('#'+protocol_input_arguments[name].relation.name).val()) ){
+                            $('#'+protocol_input_arguments[name].relation.name).val(value)
+                            $('#slider-'+protocol_input_arguments[name].relation.name).slider('set value', value);
+                        }
+                    }
+                    if (protocol_input_arguments[name].relation.type === ">"){
+                        if (parseInt(value) > parseInt($('#'+protocol_input_arguments[name].relation.name).val())){
+                            $('#'+name).val(parseInt($('#'+protocol_input_arguments[name].relation.name).val()))
+                            $('#slider-'+name).slider('set value', parseInt($('#'+protocol_input_arguments[name].relation.name).val()))
+                        }
+                        else{
+                            $('#'+name).val(value)
+                        }
+                    }
+                }
+           },
+           onMove: function(value){
+                $('#'+name).val(value)
+                if ("relation" in protocol_input_arguments[name]){
+                    if(protocol_input_arguments[name].relation.type === "<"){
+                                if(parseInt($('#'+name).val()) < parseInt($('#'+protocol_input_arguments[name].relation.name).val()) ){
+                                        $('#'+protocol_input_arguments[name].relation.name).val(value)
+                                        $('#slider-'+protocol_input_arguments[name].relation.name).slider('set value', value);
+                        }
+                    }
+                    if (protocol_input_arguments[name].relation.type === ">"){
+                 		if (parseInt(value) > parseInt($('#'+protocol_input_arguments[name].relation.name).val())){
+                   			$('#'+name).val(parseInt($('#'+protocol_input_arguments[name].relation.name).val()))
+                   			$('#slider-'+name).slider('set value', parseInt($('#'+protocol_input_arguments[name].relation.name).val()))
+                        }
+                        else{
+                            $('#'+name).val(value)
+                        }
+			        }
+              }
+        }});
+        $('#'+name).change(function() {
+            if ("relation" in protocol_input_arguments[name] && protocol_input_arguments[name].relation.type === ">"){
+                if ($(this).val() > parseInt($('#'+protocol_input_arguments[name].relation.name).val()) ){
+                    $('#'+name).val(parseInt($('#'+protocol_input_arguments[name].relation.name).val()))
+                    $('#slider-'+name).slider('set value', parseInt($('#'+protocol_input_arguments[name].relation.name).val()))
+                }
+                else{
+                    if($(this).val() > protocol_input_arguments[name].maximum)
+                        $(this).prop("value", protocol_input_arguments[name].maximum)
+                    if($(this).val() < protocol_input_arguments[name].minimum)
+                        $(this).prop("value", protocol_input_arguments[name].minimum)
+                $('#slider-'+name).slider('set value', $(this).val())
+                }
+            }
+            else{
+                if($(this).val() > protocol_input_arguments[name].maximum)
+                    $(this).prop("value", protocol_input_arguments[name].maximum)
+                if($(this).val() < protocol_input_arguments[name].minimum)
+                    $(this).prop("value", protocol_input_arguments[name].minimum)
+                
+                $('#slider-'+name).slider('set value', $(this).val())
+            }
+                //$("#slider-"+name).slider('set value', $(this).val())
+            
+        });
+    }
+	
+function configure_radio() {
+         $('.ui.radio.checkbox').checkbox();
+         gas_selector = $('#radio').find('[name="gas_type"]:checked').val();
+         console.log(gas_selector)
+         if (gas_selector === undefined){
+                 console.log("error")
+                 gas_selector = 1
+            }
+
+}
+
+
+/* plots plotly.....
+*/
+
+
+/*function process_partial_data(data_line){
+    voltage = parseFloat(data_line.value.adc_value1) 
+    current = parseFloat(data_line.value.adc_value2)
+    pressure = parseFloat(data_line.value.adc_value3)
+	time = data_line.value.time
+   
+ 
+
+
+   Plotly.extendTraces('plot_current_voltage', {x: [[voltage]],y: [[current]]}, [0,]);
+   Plotly.extendTraces('plot_voltage_time', {x:  [[time]], y:[[voltage]]}, [0]);
+   Plotly.extendTraces('plot_current_time', {x: [[time]],y: [[current]]}, [0]);
+   Plotly.extendTraces('plot_pressure_time', {x: [[time]],y: [[pressure]]}, [0]);
+
+}*/
+
+
+function buildPlot1(res, plotdiv) {
+
+console.log(res);
+var trace1 = {
+      x: [],
+      y: [],
+  error_y: {
+    type: 'data',
+    color: '#85144B',
+    array: [],
+    thickness: 1.5,
+    width:3,
+    visible: true
+  },
+  mode: 'markers',
+  line: {
+    color: "#1f77b4", 
+    width: 1
+  },marker: {
+    color: "rgb(0, 255, 255)", 
+    size: 6, 
+    line: {
+      color: "black", 
+      width: 0.5
+    }
+  },
+  type:"scatter",
+      /*line: {
+        color: '#80CAF6',
+        shape: 'linear'
+      },*/
+      
+      name: "res[1]"
+    };
+
+  var output_data = [trace1];
+
+  var layout = {
+    margin: {
+    l: 50,
+    r: 50,
+    b: 50,
+    t: 50,
+    pad: 4
+  },
+    showlegend:false, 
+    xaxis: {
+          title: gettext('Voltage[V]'),
+          titlefont:{
+                color: 'black',
+                size: 14
+                },
+               howticklabels: false
+               // rangemode: 'tozero'
+              
+               //rangeslider: {}
+          },
+    yaxis: {
+          title: gettext('Current [µA]'),
+          fixedrange: true,
+          titlefont:{
+                color: 'black',
+                size: 14
+                }
+               // rangemode: 'tozero'
+          }
+   };
+
+   Plotly.newPlot(plotdiv, output_data, layout, {responsive: true});
+ 
+}
+
+function buildPlot2(res,plotdiv) {
+console.log(res);
+var trace2 = {
+      x: [],
+      y: [],
+  error_y: {
+    type: 'data',
+    color: '#85144B',
+    array: [],
+    thickness: 1.5,
+    width:3,
+    visible: true
+  },
+  mode: 'lines+markers',
+  line: {
+    color: "#1f77b4", 
+    width: 1
+  },marker: {
+    color: "rgb(0, 255, 255)", 
+    size: 6, 
+    line: {
+      color: "black", 
+      width: 0.5
+    }
+  },
+  type:"scatter",
+      
+      name: res[2]
+    };
+
+  var output_data = [trace2];
+
+  var layout = {
+ 
+
+    xaxis: {
+          
+          title: gettext('Elapsed Time[ms]'),
+          titlefont:{
+                color: 'black',
+                size: 14
+                }
+              //  rangemode: 'tozero'
+          },
+    yaxis: {
+      //range:[0.19,0.21],
+          title: gettext('Voltage [V]'),
+          titlefont:{
+                color: 'black',
+                size: 14
+                }
+                //rangemode: 'tozero'
+          }
+   };
+
+   Plotly.newPlot(plotdiv, output_data, layout,  {responsive: false});
+ 
+  }
+  
+  
+
+function buildPlot3(res,plotdiv) {
+console.log(res);
+var trace3 = {
+      x: [],
+      y: [],
+  error_y: {
+    type: 'data',
+    color: '#85144B',
+    array: [],
+    thickness: 1.5,
+    width:3,
+    visible: true
+  },
+  mode: 'lines+markers',
+  line: {
+    color: "#1f77b4", 
+    width: 1
+  },marker: {
+    color: "rgb(0, 255, 255)", 
+    size: 6, 
+    line: {
+      color: "black", 
+      width: 0.5
+    }
+  },
+  type:"scatter",
+      
+      name: res[3]
+    };
+
+  var output_data = [trace3];
+
+  var layout = {
+ 
+
+    xaxis: {
+          
+          title: gettext('Elapsed Time[ms]'),
+          titlefont:{
+                color: 'black',
+                size: 14
+                }
+              //  rangemode: 'tozero'
+          },
+    yaxis: {
+      //range:[0.19,0.21],
+          title: gettext('Current [µA]'),
+          titlefont:{
+                color: 'black',
+                size: 14
+                }
+                //rangemode: 'tozero'
+          }
+   };
+
+   Plotly.newPlot(plotdiv, output_data, layout,  {responsive: false});
+ 
+  }
+  
+ function buildPlot4(res,plotdiv) {
+console.log(res);
+var trace4 = {
+      x: [],
+      y: [],
+  error_y: {
+    type: 'data',
+    color: '#85144B',
+    array: [],
+    thickness: 1.5,
+    width:3,
+    visible: true
+  },
+  mode: 'lines+markers',
+  line: {
+    color: "#1f77b4", 
+    width: 1
+  },marker: {
+    color: "rgb(0, 255, 255)", 
+    size: 6, 
+    line: {
+      color: "black", 
+      width: 0.5
+    }
+  },
+  type:"scatter",
+      
+      name: res[4]
+    };
+
+  var output_data = [trace4];
+
+  var layout = {
+ 
+
+    xaxis: {
+          
+          title: gettext('Elapsed Time[ms]'),
+          titlefont:{
+                color: 'black',
+                size: 14
+                }
+              //  rangemode: 'tozero'
+          },
+    yaxis: {
+      //range:[0.19,0.21],
+          title: gettext('Pressure [mbar]'),
+          titlefont:{
+                color: 'black',
+                size: 14
+                }
+                //rangemode: 'tozero'
+          }
+   };
+
+   Plotly.newPlot(plotdiv, output_data, layout,  {responsive: false});
+ 
+  }
+
+
+
+
+</script>
+{% endblock %}

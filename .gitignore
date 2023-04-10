@@ -13,5 +13,3 @@ __pycache__
 db.sqlite3
 /*.zip
 /freeweb/certificates/*
-dev_MonteCarlo_old/
-Free_web/

@@ -93,6 +93,14 @@ class Execution(models.Model):
     start = models.DateTimeField(null=True, blank=True)
     end = models.DateTimeField(null=True, blank=True)
 
+    @property
+    def order(self):
+        if self.status == 'Q':
+            lst_exec = Execution.objects.filter(status='Q', apparatus=self.apparatus, queue_time__lte= self.queue_time)
+            return len(lst_exec)
+        else:
+            return None
+
     def __str__(self):
         return _('Execution of %(protocol)s') % {'protocol': str(self.protocol)}
 

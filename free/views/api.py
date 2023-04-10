@@ -47,10 +47,8 @@ class ExecutionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Execution
-        fields = ['id','name', 'apparatus', 'protocol', 
-                  'config', 'status', 'queue_time', 'start', 'end']
-        read_only_fields = ('id', 'apparatus', 'protocol', 'status', 
-                            'queue_time', 'start', 'end')
+        fields = ['id','name', 'apparatus', 'protocol', 'config', 'status', 'queue_time', 'order', 'start', 'end']
+        read_only_fields = ('id', 'apparatus', 'protocol', 'status', 'queue_time',  'order', 'start', 'end')
 
 class ExecutionCreateSerializer(serializers.ModelSerializer):
     def validate(self, data):
@@ -234,15 +232,14 @@ class NextExecution(generics.RetrieveAPIView):
     def get_object(self):
         apparatus = get_object_or_404(Apparatus, pk=self.kwargs['id'])
         self.check_object_permissions(self.request, apparatus)        
-        obj = Execution.objects.filter(
-            status='Q', 
-            apparatus=apparatus).order_by('start').first()
+        obj = Execution.objects.filter(status='Q', apparatus=apparatus).order_by('queue_time').first()
         if obj:
             self.check_object_permissions(self.request, obj)
             obj.save()
         return obj   
 
 class ResultSerializer(serializers.ModelSerializer):
+    order = serializers.SerializerMethodField()
     def validate(self, data):
         if data['execution'].status != 'R':
             raise ValidationError('Can only add results '
@@ -258,7 +255,9 @@ class ResultSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Result
-        fields = ['id', 'execution', 'value', 'result_type', 'time']
+        fields = ['id', 'execution', 'value', 'result_type', 'time', 'order']
+    def get_order(self, instance):
+            return 20
 
 class AddResult(generics.CreateAPIView):
     """

@@ -40,7 +40,7 @@ class ExperimentCleanUpView(LoginRequiredMixin, PermissionRequiredMixin,Template
     permission_required = 'user.is_supersuser'
     def get_context_data(self, **kwargs):          
         context = super().get_context_data(**kwargs)       
-        experiment_dates = Execution.objects.annotate(time_dif=F('created_at')-date.today()).values('time_dif').annotate(total=Count('time_dif'))
+        experiment_dates = Execution.objects.annotate(time_dif=F('created_at')-date.today()).order_by('time_dif').values('time_dif').annotate(total=Count('time_dif'))
         exec_creation_dates = []
         exec_creation_count = []
         
