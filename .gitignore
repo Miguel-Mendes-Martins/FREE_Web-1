@@ -14,3 +14,5 @@ db.sqlite3
 /*.zip
 /freeweb/certificates/*
 /free/media/*
+dev_MonteCarlo_old/
+Free_web/
