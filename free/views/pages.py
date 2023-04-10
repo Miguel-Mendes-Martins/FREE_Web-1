@@ -76,7 +76,7 @@ class ExecutionsTable(Table):
 
     class Meta:
         model = Execution
-        fields = ['id', 'apparatus', 'name', 'protocol', 'status', 'order', 'start', 'end']
+        fields = ['apparatus', 'name', 'protocol', 'status', 'start', 'end']
 
 class ExecutionsListView(LoginRequiredMixin,SingleTableView):
     template_name = 'free/executions.html'

@@ -75,29 +75,17 @@
   
 <div class="right floated thirteen wide computer sixteen wide phone column"  id="content">
     <div class="ui container">
-        <h1 >{{apparatus.apparatus_type.name}} {{apparatus.id}} in {{apparatus.location}}</h1>
-         <div class="ui two column grid container">
-            <div class="column">
-                <div class="ui icon buttons">
-                    <button class="ui button" onclick="open_video_window()">
-                        <i class="play icon"></i>
-                        Open Video
-                    </button>
-                    <button class="ui button" onclick="close_video_window()">
-                        <i class="stop icon"></i>
-                        Close Video
-                    </button>
-                </div>
-            </div>
-            <div class="column">
-<!--                (<span id="exec_status"></span>) -->
-                <div class="ui info floating message" id="exec_status">
-                    <div class="header">
-                        Experiment execution status
-                      </div>
-                      <p></p>
-                </div>
-            </div>
+       <!-- <h1 >{{apparatus.apparatus_type.name}} {{apparatus.id}} in {{apparatus.location}} (<span id="exec_status"></span>)</h1> -->
+         <h1>{{apparatus.apparatus_type.name}} in {{apparatus.location}} </h1> 
+        <div class="ui icon buttons">
+        <button class="ui button" onclick="open_video_window()">
+            <i class="play icon"></i>
+            Open Video
+        </button>
+        <button class="ui button" onclick="close_video_window()">
+            <i class="stop icon"></i>
+            Close Video
+        </button>
         </div>
     </div> 
 
@@ -236,14 +224,14 @@ function submit_experiment() {
       url: endpoint,
       headers: HEADERS,
     }).then(response => {
-      console.log('execution results', response);
+      console.log('plotly_results', response);
       //execution_status = 'NS'
       //  update_button_info(execution_status)
       execution_status = 'Q'
       update_tab_visibility()
         update_button_input_status(execution_status)
         popup_message("experiment submited")
-        start_pooling_queue_order()
+        start_pooling_results()
         next_result_id = 0;
         
     }).catch(error => {
@@ -253,38 +241,6 @@ function submit_experiment() {
       }
     });
 }
-
-
-function start_pooling_queue_order() {
-       // Results = setInterval(getData,500)
-       get_queue_order();
-    }
-function get_queue_order(){
-    executionID = current_execution.id;
-    endpoint =  "/api/v1/execution/"+executionID;
-    console.log(next_result_id);
-    HEADERS = {
-      "X-CSRFToken": X_CSRFToken,
-      }
-    axios({
-        method: 'get', //you can set what request you want to be
-        url: endpoint,
-        headers: HEADERS,
-    }).then(response => {
-        order =  response.data.order
-        console.log('execution order', order);
-        $("#exec_status > p").html("Experiment saved and submited, on position "+order+"of queue")
-        if (order <= 1){
-            start_pooling_results()
-        }else{
-            setTimeout(get_queue_order, 5000);
-        }
-
-    }).catch(error => {
-        console.error('Error : ', error.response.data);
-    });
-}
-
 
 
 function start_pooling_results() {
@@ -352,7 +308,7 @@ function process_experiment_data_default(data){
 
 
 
-function table_insert_partial_data_default(data){
+function table_insert_partial_data(data){
     console.log(data)
     table_columns = jQuery( "#results_table > thead> tr> th" );
     col_id = []
@@ -388,43 +344,27 @@ function resetInputValues(){
   	input_list = jQuery( ".free-input" );
     let check_helper = 1;
   	for ( ind = 0, len = input_list.length; ind < len; ind++ ) {
-        	i = $(input_list[ind]);
-        	console.log(["checkbox"].includes(input_list[ind].type))
-        	if(["radio"].includes(input_list[ind].type) )
-        	{
-            		//console.log("ROSSA");
-            		//console.log(input_list[ind].checked);
-            		console.log("Here teste")
-            		if (protocol_input_arguments[i.attr("id")].default === check_helper){
-                		i.prop("checked", true).trigger('change');
-            		}
-            		else{
-                		i.prop("checked", false).trigger('change');
-            		}
-            		check_helper = check_helper + 1;
-        	}
- 		else if (["checkbox"].includes(input_list[ind].type))
-        	{
-                	console.log()
-                	console.log(i.attr("id"))
-                	console.log(protocol_input_arguments[i.attr("id")].default)
-
-         		if (protocol_input_arguments[i.attr("id")].default === 1)
-        		{
-                        	console.log("on")
-                        	console.log(protocol_input_arguments[i.attr("id")].default)
-				i.prop("checked", true).trigger('change')
-				i.prop("value", protocol_input_arguments[i.attr("id")].default)
-			}
-		}
-		else
-        	{
+        i = $(input_list[ind]);
+        if(["radio"].includes(input_list[ind].type) )
+        {
+            //console.log("ROSSA");
+            //console.log(input_list[ind].checked);
+            console.log("Here teste")
+            if (protocol_input_arguments[i.attr("id")].default === check_helper){
+                i.prop("checked", true).trigger('change');
+            }
+            else{
+                i.prop("checked", false).trigger('change');
+            }
+            check_helper = check_helper + 1;
+        }
+		else{
 			//i = $(input_list[ind]);
-            		console.log(i.val())
-            		console.log(i.attr("id"))
-            		console.log( protocol_input_arguments[i.attr("id")].default)
-            		new_val = protocol_input_arguments[i.attr("id")].default
-   	    		i.prop("value", new_val).trigger('change');
+            console.log(i.val())
+            console.log(i.attr("id"))
+            console.log( protocol_input_arguments[i.attr("id")].default)
+            new_val = protocol_input_arguments[i.attr("id")].default
+   			i.prop("value", new_val).trigger('change');
 		}
     	}
     	if(execution_status === 'C'){
@@ -442,7 +382,7 @@ function reloadInputValues(){
         //console.log(input_list[ind])
         i = $(input_list[ind]);
         if(["radio"].includes(input_list[ind].type) )
-        {
+            {
                 //console.log("ROSSA");
                 //console.log(current_execution.config[i.attr("id")]);
                 if (current_execution.config[i.attr("id")] === check_helper)
@@ -453,21 +393,7 @@ function reloadInputValues(){
                     i.prop("checked", false).trigger('change');
                 }
                 check_helper = check_helper + 1;
-        }
-        else if (["checkbox"].includes(input_list[ind].type))
-        {
-                console.log()
-                console.log(i.attr("id"))
-                console.log(current_execution.config[i.attr("id")])
-
-         	if (current_execution.config[i.attr("id")] === 1)
-        	{
-                        console.log("on")
-                        console.log(current_execution.config[i.attr("id")])
-			i.prop("checked", true).trigger('change')
-			i.prop("value", current_execution.config[i.attr("id")])
-		}
-	}
+            }
         else{
 
                 i = $(input_list[ind]);
@@ -479,9 +405,7 @@ function reloadInputValues(){
         }
     }
     $("#execution_name").val(current_execution.name)
-    if (execution_status != 'F'){
-        execution_status = 'C'
-    }
+    execution_status = 'C'
     update_button_input_status(execution_status)
     popup_message("values reloaded")
 }
@@ -517,7 +441,7 @@ function update_button_input_status(execution_status){
     }
     // new execution
     if (execution_status === ''){
-        $("#exec_status > p").html("New experiment not saved yet");
+        $( "#exec_status").html("New not saved");
         $("#createButton").removeClass('disabled');
         $("#saveButton").css("display", 'none')
         $("#saveButton").hide()
@@ -532,7 +456,7 @@ function update_button_input_status(execution_status){
         $("#saveNameButton").addClass('disabled');
     }
     if (execution_status === 'C'){
-        $("#exec_status > p").html("Saved experiment not submited for execution");
+        $( "#exec_status").html("Saved");
         $("#createButton").hide()
         $("#saveButton").show()
         $("#saveButton").addClass('disabled');
@@ -546,7 +470,7 @@ function update_button_input_status(execution_status){
         $("#saveNameButton").addClass('disabled');
     }
     if (execution_status === 'NS'){
-        $("#exec_status > p").html("Modified experiment not saved yet");
+        $( "#exec_status").html("Modified");
         $("#createButton").hide()
         $("#saveButton").removeClass('disabled');
         $("#startButton").addClass('disabled');
@@ -558,7 +482,7 @@ function update_button_input_status(execution_status){
         $( "#replayButton").css("display", 'none')
     }
     if (execution_status === 'Q'){
-        $("#exec_status > p").html("Experiment saved and submited, on queue waiting for execution");
+        $( "#exec_status").html("Waiting for execution");
         $("#createButton").hide()
         $("#saveButton").hide();
         $("#startButton").hide();
@@ -571,7 +495,7 @@ function update_button_input_status(execution_status){
         $("#saveNameButton").addClass('disabled');
     }
     if (execution_status === 'R'){
-        $("#exec_status > p").html("Experiment runnning wth results being updated");
+        $( "#exec_status").html("Running execution");
         $("#createButton").hide()
         $("#saveButton").hide();
         $("#startButton").hide();
@@ -585,7 +509,7 @@ function update_button_input_status(execution_status){
 
     }
     if (execution_status === 'F'){
-        $("#exec_status > p").html("Finished experiment with final results available");
+        $( "#exec_status").html("Finished execution");
         $("#createButton").hide()
         $("#saveButton").hide();
         $("#startButton").hide();
@@ -599,7 +523,7 @@ function update_button_input_status(execution_status){
 
     }
     if (execution_status === 'A'){
-        $("#exec_status > p").html("Aborted execution");
+        $( "#exec_status").html("Aborted execution");
         $("#createButton").hide()
         $("#saveButton").hide();
         $("#startButton").hide();
@@ -613,7 +537,7 @@ function update_button_input_status(execution_status){
 
     }
     if (execution_status === 'T'){
-        $("#exec_status > p").html("Timed out execution");
+        $( "#exec_status").html("Timed out execution");
         $("#createButton").hide()
         $("#saveButton").hide();
         $("#startButton").hide();
@@ -627,7 +551,7 @@ function update_button_input_status(execution_status){
 
     }
     if (execution_status === 'E'){
-        $("#exec_status > p").html("Error execution");
+        $( "#exec_status").html("Error execution");
         $("#createButton").hide()
         $("#saveButton").hide();
         $("#startButton").hide();
@@ -724,7 +648,6 @@ function save_experiment() {
         current_execution.config = response.data.config;
         update_button_input_status(execution_status)
         popup_message("experiment sucessfully saved")
-        on_save_experiment_UI()
     }).catch(console);  
   
   }
@@ -827,7 +750,7 @@ $( document ).ready(function() {
 
    
     if(execution_status === 'Q'){
-        start_pooling_queue_order()
+        start_pooling_results()
     }
     if(execution_status === 'R'){
         start_pooling_results()
