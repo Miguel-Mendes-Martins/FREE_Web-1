@@ -56,7 +56,7 @@ class QuizAdmin(admin.ModelAdmin):
 
 
 class CategoryAdmin(admin.ModelAdmin):
-    search_fields = ('category', )
+    search_fields = ('category', 'apparatus_type')
 
 
 class SubCategoryAdmin(admin.ModelAdmin):
@@ -69,7 +69,7 @@ class MCQuestionAdmin(admin.ModelAdmin):
     list_display = ('content', 'category', )
     list_filter = ('category',)
     fields = ('content', 'category', 'sub_category',
-              'figure', 'quiz', 'explanation', 'answer_order')
+              'figure', 'quiz', 'explanation', 'priority', 'answer_order')
 
     search_fields = ('content', 'explanation')
     filter_horizontal = ('quiz',)
@@ -89,7 +89,7 @@ class TFQuestionAdmin(admin.ModelAdmin):
     list_display = ('content', 'category', )
     list_filter = ('category',)
     fields = ('content', 'category', 'sub_category',
-              'figure', 'quiz', 'explanation', 'correct',)
+              'figure', 'quiz', 'explanation','priority', 'correct',)
 
     search_fields = ('content', 'explanation')
     filter_horizontal = ('quiz',)

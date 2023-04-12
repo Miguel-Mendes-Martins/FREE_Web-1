@@ -310,8 +310,8 @@ class QuizTake(FormView):
     def form_valid_user(self, form):
         progress, _ = Progress.objects.get_or_create(user=self.request.user)
         guess = form.cleaned_data['answers']
-        if self.request.POST.get('apparatus_id') != None:
-            id = self.request.POST.get('apparatus_id')
+        if self.request.POST.get('protocol_id') != None:
+            id = self.request.POST.get('protocol_id')
             random_exec = self.get_random_execution(int(id))
             random_result = Result.objects.get(execution=random_exec.pk,result_type='f')
         

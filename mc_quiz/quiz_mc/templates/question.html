@@ -93,7 +93,8 @@
 				{% elif sub_category == "Fetch" %}
 					<form action="" method="POST" id="form">{% csrf_token %}
 					<input type=hidden name="question_id" value="{{ question.id }}">
-					<input type=hidden name="apparatus_id" value="{{ quiz.category.pk }}">
+					<!-- <input type=hidden name="apparatus_id" value="{{ quiz.category.pk }}"> -->
+					<input type=hidden name="protocol_id" value="{{ quiz.category.apparatus_protocol.pk }}">
 					<input type="submit" value="{% trans "Fetch experiment" %}" class="ui grey button" id="fetchButton" >
 					</form>
 				{% endif %} 

@@ -13,6 +13,7 @@ from six import python_2_unicode_compatible
 from django.conf import settings
 
 from model_utils.managers import InheritanceManager
+from django.db.models import F
 
 from free.models import *
 import random
@@ -34,6 +35,13 @@ class Category(models.Model):
         verbose_name=_("Category"),
         max_length=250, blank=True,
         unique=True, null=True)
+    
+    apparatus_protocol = models.ForeignKey(
+        Protocol,
+        verbose_name=_("Apparatus Protocol"), 
+        blank = True, 
+        null=True, 
+        on_delete=models.SET_NULL)
 
     objects = CategoryManager()
 
@@ -656,7 +664,7 @@ class Question(models.Model):
     class Meta:
         verbose_name = _("Question")
         verbose_name_plural = _("Questions")
-        ordering = ['category','priority']
+        ordering = ['category',F('priority').asc(nulls_last=True)]
 
     def __str__(self):
         return self.content
