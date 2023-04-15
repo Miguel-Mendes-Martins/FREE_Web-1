@@ -84,10 +84,9 @@
 
   {% if questions %}
 
-
     {% for question in questions %}
 
-    {%if question.sub_category == None %}
+      {% if question.sub_category == None %}
 
         <p class="lead">
       {{ question.content }}
@@ -99,34 +98,24 @@
         <p>{% trans "Your answer" %}: {{ question|answer_choice_to_string:question.user_answer }}</p>
         {% endif %}
 
-      {% comment %} {% if question.explanation %}
-      <p><strong>{% trans "Explanation" %}:</strong></p>
-      <div class="well " style="background-color: #fcf8e3;">
-      <p>{{ question.explanation|safe }}</p>
-      </div>
-      {%endif%} {% endcomment %}
-
       {% if question.explanation %}
-      <p><strong>{% trans "Explanation" %}:</strong></p>
-        {% if question.pk in incorrect_questions %}
-          <div class="well " style="background-color: #bc544b;">
-        {% else %}
-          <div class="well " style="background-color: #99edc3;">
-        {% endif %}
-      <p>{{ question.explanation|safe }}</p>
-      </div>
-      {%endif%}
+        <p><strong>{% trans "Explanation" %}:</strong></p>
+          {% if question.pk in incorrect_questions %}
+            <div class="well " style="background-color: #bc544b;">
+          {% else %}
+            <div class="well " style="background-color: #99edc3;">
+          {% endif %}
+        <p>{{ question.explanation|safe }}</p>
+        </div>
+      {% endif %}
 
       <hr>
       {% endif %}
   {% endfor %}
 
+{% endif %}
 
-  
-
-  {% endif %}
-
-  {%if lti == True %}
+  {% if lti == True %}
     <form action="{% url 'lti_provider:lti-post-grade'%}"  method="post">{% csrf_token %}
       <label for="Return to Moodle"></label>
       <input type=hidden name="score" value="{{score_send}}">
@@ -140,21 +129,3 @@
   {% endif %}
 
 {% endblock %}
-
-{% block script %}
-
-  {% comment %} <script src="{% static 'free/js/configuration-input.js' %}"></script>
-  <script src="{% static 'free/js/buttonsFREE.js' %}"></script>
-  <script type='text/javascript'>
-    var percentage = document.getElementById("percent").textContent
-    const config_input = new ConfigurationInput("configuration-input");
-    window.addEventListener('message', function(event) {
-      console.log("Message received from the child: " + event.data); // Message received from child
-      if(event.data === "finished"){
-        $("#continueButton").removeClass("disabled");
-      }
-      });
-  </script> {% endcomment %}
-
-
-{% endblock%}
