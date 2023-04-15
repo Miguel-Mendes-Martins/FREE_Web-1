@@ -132,6 +132,7 @@
 			{% endif %}
 		{% endif %}
 
+
 {% endblock %}
 
 {% block script %}
@@ -151,6 +152,8 @@
 	}
 
 	function create_experiment(){
+		console.log(apparatus_id)
+		console.log(protocol_id)
 		form_config = {R: 2, Iteration:20 }
 		endpoint= "/api/v1/execution";
 		method_queue = 'post';

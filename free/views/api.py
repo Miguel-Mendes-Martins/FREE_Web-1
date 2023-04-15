@@ -2,12 +2,14 @@ from rest_framework import generics, serializers, views
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from free.models import *
-from mc_quiz.quiz_mc.models import *
+#from mc_quiz.quiz_mc.models import *
+#from montecarlo_quiz.models.quiz_models import Quiz,Sitting
 import json
 import decimal
 from jsonschema import validate, ValidationError as JSONValidationError
 from freeweb import settings
 from django.shortcuts import get_object_or_404
+from django.apps import apps
 
 from free.views.permissions import ApparatusOnlyAccess
 
@@ -113,9 +115,14 @@ class ExecutionConfigure(generics.CreateAPIView):
             if (self.request.META.get('HTTP_REFERER').split("/")[-4] 
                 != "execution" ):
                 exec_id = serializer['id'].value
-                quiz = self.request.META.get('HTTP_REFERER').split("/")[-3]
+                quiz_name = self.request.META.get('HTTP_REFERER').split("/")[4]
+                #gets app name
+                app = self.request.META.get('HTTP_REFERER').split("/")[3]
+                #Imports sitting and quiz models from right app
+                Sitting = apps.get_model(app,'Sitting')
+                Quiz = apps.get_model(app,'Quiz')
                 sitting = Sitting.objects.get(
-                    quiz=Quiz.objects.get(url=quiz),
+                    quiz=Quiz.objects.get(url=quiz_name),
                     user=self.request.user, 
                     complete = False)
                 sitting.execution = Execution.objects.get(pk=exec_id)
