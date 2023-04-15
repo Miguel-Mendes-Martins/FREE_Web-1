@@ -10,7 +10,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, ListView, TemplateView, FormView
 
 from .forms import QuestionForm, EssayForm
-from .models import Quiz, Category_P, Progress, Sitting, Question
+from .models import Quiz, Category, Progress, Sitting, Question
 from mc_quiz.essay_mc.models import Essay_Question
 
 from django_tables2 import Table, TemplateColumn, Column
@@ -114,7 +114,7 @@ class QuizDetailView(DetailView):
 
 
 class CategoriesListView(ListView):
-    model = Category_P
+    model = Category
 
 
 class ViewQuizListByCategory(ListView):
@@ -123,7 +123,7 @@ class ViewQuizListByCategory(ListView):
 
     def dispatch(self, request, *args, **kwargs):
         self.category = get_object_or_404(
-            Category_P,
+            Category,
             category=self.kwargs['category_name']
         )
 

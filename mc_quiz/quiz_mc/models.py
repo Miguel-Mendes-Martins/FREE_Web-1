@@ -29,7 +29,7 @@ class CategoryManager(models.Manager):
 
 
 @python_2_unicode_compatible
-class Category_P(models.Model):
+class Category(models.Model):
 
     category = models.CharField(
         verbose_name=_("Category"),
@@ -39,7 +39,7 @@ class Category_P(models.Model):
     apparatus_protocol = models.ForeignKey(
         Protocol,
         verbose_name=_("Apparatus Protocol"), 
-        related_name='%(class)s_main_apparatus_protocol',
+        related_name='%(app_label)s_%(class)s_apparatus_protocol',
         blank = True, 
         null=True, 
         on_delete=models.SET_NULL)
@@ -49,7 +49,6 @@ class Category_P(models.Model):
     class Meta:
         verbose_name = _("Category")
         verbose_name_plural = _("Categories")
-        abstract = True
 
     def __str__(self):
         return self.category
@@ -63,7 +62,8 @@ class SubCategory(models.Model):
         max_length=250, blank=True, null=True)
 
     category = models.ForeignKey(
-        Category_P, null=True, blank=True,
+        Category, null=True, blank=True,
+        related_name='%(app_label)s_%(class)s_category',
         verbose_name=_("Category"), on_delete=models.CASCADE)
 
     objects = CategoryManager()
@@ -93,7 +93,8 @@ class Quiz(models.Model):
         verbose_name=_("user friendly url"))
 
     category = models.ForeignKey(
-        Category_P, null=True, blank=True,
+        Category, null=True, blank=True,
+        related_name='%(app_label)s_%(class)s_category',
         verbose_name=_("Category"), on_delete=models.CASCADE)
 
     random_order = models.BooleanField(
@@ -205,6 +206,7 @@ class Progress(models.Model):
         category, score, possible, category, score, possible, ...
     """
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
+                                 related_name='%(app_label)s_%(class)s_user',
                                  verbose_name=_("User"), 
                                  on_delete=models.CASCADE)
 
@@ -233,7 +235,7 @@ class Progress(models.Model):
         score_before = self.score
         output = {}
 
-        for cat in Category_P.objects.all():
+        for cat in Category.objects.all():
             to_find = re.escape(cat.category) + r",(\d+),(\d+),"
             #  group 1 is score, group 2 is highest possible
 
@@ -268,7 +270,7 @@ class Progress(models.Model):
 
         Does not return anything.
         """
-        category_test = Category_P.objects.filter(category=question.category)\
+        category_test = Category.objects.filter(category=question.category)\
                                         .exists()
 
         if any([item is False for item in [category_test,
@@ -365,7 +367,7 @@ class SittingManager(models.Manager):
             sitting = self.filter(user=user, quiz=quiz, complete=False)[0]
         return sitting
 
-    def unsent_sitting(self,user,quiz):
+    def unsentformat_sitting(self,user,quiz):
         try:
             sitting = self.get(user=user, quiz=quiz,
                                complete=True, sent_moodle=False)
@@ -398,16 +400,19 @@ class Sitting(models.Model):
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, 
+        related_name='%(app_label)s_%(class)s_user',
         verbose_name=_("User"), 
         on_delete=models.CASCADE)
 
     quiz = models.ForeignKey(
         Quiz, 
+        related_name='%(app_label)s_%(class)s_quiz',
         verbose_name=_("Quiz"), 
         on_delete=models.CASCADE)
 
     execution = models.ForeignKey(
         Execution,
+        related_name='%(app_label)s_%(class)s_execution',
         verbose_name=_("Execution"), 
         blank = True, 
         null=True, 
@@ -622,14 +627,16 @@ class Question(models.Model):
                                   verbose_name=_("Quiz"),
                                   blank=True)
 
-    category = models.ForeignKey(Category_P,
+    category = models.ForeignKey(Category,
                                  verbose_name=_("Category"),
+                                 related_name='%(app_label)s_%(class)s_category',
                                  blank=True,
                                  null=True,
                                  on_delete=models.CASCADE)
 
     sub_category = models.ForeignKey(SubCategory,
                                      verbose_name=_("Sub-Category"),
+                                     related_name='%(app_label)s_%(class)s_subcategory',
                                      blank=True,
                                      null=True,
                                      on_delete=models.CASCADE)

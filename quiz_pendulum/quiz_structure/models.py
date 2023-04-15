@@ -30,11 +30,26 @@ class CategoryManager(models.Manager):
 
 
 @python_2_unicode_compatible
-class Category(Category):
+class Category(models.Model):
+
+    category = models.CharField(
+        verbose_name=_("Category"),
+        max_length=250, blank=True,
+        unique=True, null=True)
+    
+    apparatus_protocol = models.ForeignKey(
+        Protocol,
+        verbose_name=_("Apparatus Protocol"), 
+        related_name='%(app_label)s_%(class)s_apparatus_protocol',
+        blank = True, 
+        null=True, 
+        on_delete=models.SET_NULL)
+
+    objects = CategoryManager()
 
     class Meta:
-        verbose_name = _("Category Pendulum")
-        verbose_name_plural = _("Categories Pendulum")
+        verbose_name = _("Category")
+        verbose_name_plural = _("Categories")
 
     def __str__(self):
         return self.category
@@ -48,7 +63,8 @@ class SubCategory(models.Model):
         max_length=250, blank=True, null=True)
 
     category = models.ForeignKey(
-        Category, null=True, blank=True,
+        Category, null=True, blank=True, 
+        related_name='%(app_label)s_%(class)s_category',
         verbose_name=_("Category"), on_delete=models.CASCADE)
 
     objects = CategoryManager()
@@ -79,6 +95,7 @@ class Quiz(models.Model):
 
     category = models.ForeignKey(
         Category, null=True, blank=True,
+        related_name='%(app_label)s_%(class)s_category',
         verbose_name=_("Category"), on_delete=models.CASCADE)
 
     random_order = models.BooleanField(
@@ -190,6 +207,7 @@ class Progress(models.Model):
         category, score, possible, category, score, possible, ...
     """
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
+                                 related_name='%(app_label)s_%(class)s_user',
                                  verbose_name=_("User"), 
                                  on_delete=models.CASCADE)
 
@@ -382,17 +400,20 @@ class Sitting(models.Model):
     """
 
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
+        settings.AUTH_USER_MODEL,
+        related_name='%(app_label)s_%(class)s_user',
         verbose_name=_("User"), 
         on_delete=models.CASCADE)
 
     quiz = models.ForeignKey(
-        Quiz, 
+        Quiz,
+        related_name='%(app_label)s_%(class)s_quiz',
         verbose_name=_("Quiz"), 
         on_delete=models.CASCADE)
 
     execution = models.ForeignKey(
         Execution,
+        related_name='%(app_label)s_%(class)s_execution',
         verbose_name=_("Execution"), 
         blank = True, 
         null=True, 
@@ -609,12 +630,14 @@ class Question(models.Model):
 
     category = models.ForeignKey(Category,
                                  verbose_name=_("Category"),
+                                 related_name='%(app_label)s_%(class)s_category',
                                  blank=True,
                                  null=True,
                                  on_delete=models.CASCADE)
 
     sub_category = models.ForeignKey(SubCategory,
                                      verbose_name=_("Sub-Category"),
+                                     related_name='%(app_label)s_%(class)s_subcategory',
                                      blank=True,
                                      null=True,
                                      on_delete=models.CASCADE)

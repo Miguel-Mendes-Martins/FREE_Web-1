@@ -106,7 +106,7 @@ class SittingAdmin(admin.ModelAdmin):
     list_display =('user','complete')
 
 admin.site.register(Quiz, QuizAdmin)
-admin.site.register(Category_P, CategoryAdmin)
+admin.site.register(Category, CategoryAdmin)
 admin.site.register(SubCategory, SubCategoryAdmin)
 admin.site.register(MCQuestion, MCQuestionAdmin)
 admin.site.register(Progress, ProgressAdmin)

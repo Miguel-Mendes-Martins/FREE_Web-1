@@ -105,11 +105,17 @@ class EssayQuestionAdmin(admin.ModelAdmin):
 class SittingAdmin(admin.ModelAdmin):
     list_display =('user','complete')
 
-admin.site.register(Quiz, QuizAdmin)
-admin.site.register(Category_P, CategoryAdmin)
-admin.site.register(SubCategory, SubCategoryAdmin)
-admin.site.register(MCQuestion, MCQuestionAdmin)
-admin.site.register(Progress, ProgressAdmin)
-admin.site.register(TF_Question, TFQuestionAdmin)
-admin.site.register(Essay_Question, EssayQuestionAdmin)
-admin.site.register(Sitting, SittingAdmin)
+class PendulumAdminSite(admin.AdminSite):
+    site_header = "Pendulum Quiz admin"
+    site_title = "Pendulum Quiz Portal"
+
+pendquiz_admin_site = PendulumAdminSite(name='pendulumquiz_admin')
+
+pendquiz_admin_site.register(Quiz, QuizAdmin)
+pendquiz_admin_site.register(Category, CategoryAdmin)
+pendquiz_admin_site.register(SubCategory, SubCategoryAdmin)
+pendquiz_admin_site.register(MCQuestion, MCQuestionAdmin)
+pendquiz_admin_site.register(Progress, ProgressAdmin)
+pendquiz_admin_site.register(TF_Question, TFQuestionAdmin)
+pendquiz_admin_site.register(Essay_Question, EssayQuestionAdmin)
+pendquiz_admin_site.register(Sitting, SittingAdmin)
