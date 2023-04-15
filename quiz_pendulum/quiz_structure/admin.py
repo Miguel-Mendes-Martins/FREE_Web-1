@@ -4,9 +4,9 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.utils.translation import ugettext_lazy as _
 
 from .models import *
-from mc_quiz.multichoice_mc.models import MCQuestion, Answer
-from mc_quiz.true_false_mc.models import TF_Question
-from mc_quiz.essay_mc.models import Essay_Question
+from quiz_pendulum.multiplechoice_questions.models import MCQuestion, Answer
+from quiz_pendulum.truefalse_questions.models import TF_Question
+from quiz_pendulum.open_questions.models import Essay_Question
 
 
 class AnswerInline(admin.TabularInline):

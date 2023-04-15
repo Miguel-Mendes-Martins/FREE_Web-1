@@ -11,7 +11,7 @@ from django.views.generic import DetailView, ListView, TemplateView, FormView
 
 from .forms import QuestionForm, EssayForm
 from .models import Quiz, Category_P, Progress, Sitting, Question
-from mc_quiz.essay_mc.models import Essay_Question
+from quiz_pendulum.open_questions.models import Essay_Question
 
 from django_tables2 import Table, TemplateColumn, Column
 from django_tables2.views import SingleTableView
@@ -37,22 +37,15 @@ class SittingFilterTitleMixin(object):
         return queryset
 
 
-# class QuizListView(ListView):
-#     model = Quiz
-
-#     def get_queryset(self):
-#         queryset = super(QuizListView, self).get_queryset()
-#         return queryset.filter(draft=False)
-
 class QuizListTable(Table):
-    action = TemplateColumn(template_name='quiz_mc/quiz_link.html')
+    action = TemplateColumn(template_name='quiz_structure/quiz_link.html')
 
     class Meta:
         model = Quiz
         fields = ['title', 'category', 'exam_paper', 'single_attempt']    
 
 class QuizListView(SingleTableView):
-    template_name = 'quiz_mc/quiz_list.html'
+    template_name = 'quiz_structure/quiz_list.html'
     table_class = QuizListTable
     queryset = Quiz.objects.all().filter(draft=False)
 
@@ -68,7 +61,7 @@ class SittingListTable(Table):
             ['attempt','quiz_title', 'current_score', 'max_score', 'percent'])    
 
 class SittingListView(SingleTableView):
-    template_name = 'quiz_mc/progress_list.html'
+    template_name = 'quiz_structure/progress_list.html'
     table_class = SittingListTable
     def get_queryset(self):
         return Sitting.objects.filter(user=self.request.user,complete=True)
@@ -83,7 +76,7 @@ class SittingListView(SingleTableView):
 #######################################
 
 class QuizIncompletePListTable(Table):
-    action = TemplateColumn(template_name='quiz_mc/incomplete_link.html')
+    action = TemplateColumn(template_name='quiz_structure/incomplete_link.html')
     q_left = Column(accessor='questions_left',verbose_name='Questions Left')
     q_total = Column(accessor='get_max_score',verbose_name='Total Questions')
     category = Column(accessor='category',verbose_name='Category')
@@ -93,7 +86,7 @@ class QuizIncompletePListTable(Table):
         fields = ['user','quiz','category','q_left','q_total']    
         
 class QuizIncompleteListView(SingleTableView):
-    template_name = 'quiz_mc/incomplete_list.html'
+    template_name = 'quiz_structure/incomplete_list.html'
     table_class = QuizIncompletePListTable
     def get_queryset(self):
         return Sitting.objects.filter(user=self.request.user,complete=False)

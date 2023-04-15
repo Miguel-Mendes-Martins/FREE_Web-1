@@ -1,0 +1,185 @@
+{% extends base %}
+{% load i18n%}
+{% load static %}
+
+{% load quiz_tags %}
+
+{% block title %} {{ quiz.title }} {% endblock %}
+{% block description %} {{ quiz.title }} - {{ quiz.description }} {% endblock %}
+
+{% block headscript%}
+<script id="csrf_token" type="application/json">{{csrf_token}}</script>
+{{apparatus.config|json_script:"apparatus-config"}}
+{{apparatus.id|json_script:"apparatus-id"}}
+{{protocol.config|json_script:"protocol-config"}}
+{{protocol.id|json_script:"protocol-id"}}
+{{execution_json|json_script:"execution-config"}}
+{{final_result|json_script:"final-result"}}
+{{quiz.id|json_script:"quiz-id"}}
+
+<script>
+    X_CSRFToken = document.getElementById('csrf_token').textContent
+
+    var apparatus_id = JSON.parse(document.getElementById('apparatus-id').textContent);
+    var protocol_id = JSON.parse(document.getElementById('protocol-id').textContent);
+	current_execution = JSON.parse(document.getElementById('execution-config').textContent);
+	var quiz_id = JSON.parse(document.getElementById('quiz-id').textContent);
+
+</script>
+
+{% endblock %}
+
+{% block content %}
+
+		<h1>Quiz:</h1>
+		{% if previous.answers %}
+
+		<p class="muted"><small>{% trans "The previous question" %}:</small></p>
+		<p>{{ previous.previous_question }}</p>
+
+		{% if previous.previous_outcome %}
+			<div class="alert alert-success">
+		{% else %}
+			<div class="alert alert-warning">
+		{% endif %}
+			<p><small>
+				{% trans "Your answer was" %} </small>
+				<strong>
+				{{ previous.previous_outcome|yesno:"correct,incorrect" }}
+				</strong>
+			</p>
+
+			</div>
+
+			{% include 'correct_answer.html' %}
+
+			<p><strong>{% trans "Explanation" %}:</strong></p>
+			<div class="well " style="background-color: #fcf8e3;">
+			<p>{{ previous.previous_question.explanation }}</p>
+			</div>
+
+			<hr>
+
+		{% endif %}
+
+		<br />
+
+		{% if question %}
+
+		{% if progress %}
+		<div style="float: right;">
+		{% trans "Question" %} {{ progress.0|add:1 }} {% trans "of" %} {{ progress.1 }}
+		</div>
+		{% endif %}
+
+		<p>
+		<small class="muted">{% trans "Question category" %}:</small>
+		<strong>{{ question.category }}</strong>
+		</p>
+
+		<p class="lead">{{ question.content }} </p>
+		{% if question.rounding %}
+		Answer with {{decimal_cases}} decimal cases
+		{% endif %}		
+
+		{% if question.figure %}
+			<img src="{{ question.figure.url }}" alt="{{ question.content }}" />
+		{% endif %}
+
+		{% if question.sub_category %}
+			{% if execution.id == None %}
+				{% if sub_category == "Create" %}
+				<div class="ui grey button" onclick="create_experiment()" id="saveButton">{% trans 'Start execution'%}</div>
+				{% elif sub_category == "Fetch" %}
+					<form action="" method="POST" id="form">{% csrf_token %}
+					<input type=hidden name="question_id" value="{{ question.id }}">
+					<!-- <input type=hidden name="apparatus_id" value="{{ quiz.category.pk }}"> -->
+					<input type=hidden name="protocol_id" value="{{ quiz.category.apparatus_protocol.pk }}">
+					<input type="submit" value="{% trans "Fetch experiment" %}" class="ui grey button" id="fetchButton" >
+					</form>
+				{% endif %} 
+			{% elif execution.status == "C" or execution.status == "Q"  %}
+				{% comment %} <a href="{% url 'free:execution' execution.id%}"><button class='ui button'>{% trans 'Continue execution'%}</button></a> {% endcomment %}
+				<form action="" method="POST" id="form">{% csrf_token %}
+				<input type=hidden name="question_id" value="{{ question.id }}">
+				<input type="submit" value="{% trans "Continue to Quiz" %}" class="ui disabled green button" id="continueButton" >
+				</form>
+			{% elif execution.status == "F" %}
+				<form action="" method="POST" id="form">{% csrf_token %}
+				<input type=hidden name="question_id" value="{{ question.id }}">
+				<input type="submit" value="{% trans "Continue to Quiz" %}" class="ui green button" id="continueButton" >
+				</form>
+			{% endif %}
+			
+		{% else %}
+			<form action="" method="POST" id="form">{% csrf_token %}
+			<input type=hidden name="question_id" value="{{ question.id }}">
+			<ul class="list-group" id = "list-group">
+				{% for answer in form.answers %}
+				<li class="list-group-item">
+					{{ answer }}
+				</li>
+				{% endfor %}
+			</ul>
+				<p></p>
+			<input type="submit" value="{% trans "Check" %}" class="btn btn-large btn-block btn-warning" >
+			</form>
+		{% endif %}
+
+		
+
+		{% if execution.status == "C" or execution.status == "Q" or execution.status == "F"%}
+		<iframe src="{% url 'free:execution' execution.id %}" title="execution" width="100%" height="900" id="iframe_execution" >
+		</iframe>
+		{% endif %}
+
+		<!-- {% endif %} -->
+{% endblock %}
+
+{% block script %}
+<script type='text/javascript'>
+	const iframe = document.getElementById("iframe_execution")
+	if(iframe != null){
+		iframe.addEventListener("load", function(){
+			setInterval(check_finished, 500);
+		});
+	}
+
+	function check_finished(){
+		aux = window.frames[0].window.execution_status
+		if (aux == 'F'){
+			$("#continueButton").removeClass("disabled");
+		}
+	}
+
+	function create_experiment(){
+		form_config = {R: 2, Iteration:20 }
+		endpoint= "/api/v1/execution";
+		method_queue = 'post';
+		data_send = {"apparatus": apparatus_id, "protocol": protocol_id};
+		data_send["config"] = form_config;
+		data_send["name"] = "";
+		data_send["quiz"] = quiz_id;
+
+		HEADERS = {
+			"X-CSRFToken": X_CSRFToken,
+		}
+
+		console.log('JSON : ' +  endpoint);
+    	console.log(JSON.stringify(data_send));
+		
+		axios({
+			method: method_queue, //you can set what request you want to be
+			url: endpoint,
+			headers: HEADERS,
+			data: data_send,
+		}).then(response => {
+			window.location.reload();
+			popup_message("experiment sucessfully created")
+
+		}).catch(console); 
+		}
+</script>
+
+
+{% endblock%}

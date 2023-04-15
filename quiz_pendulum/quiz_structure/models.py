@@ -16,6 +16,7 @@ from model_utils.managers import InheritanceManager
 from django.db.models import F
 
 from free.models import *
+from mc_quiz.quiz_mc.models import *
 import random
 
 class CategoryManager(models.Manager):
@@ -29,27 +30,11 @@ class CategoryManager(models.Manager):
 
 
 @python_2_unicode_compatible
-class Category_P(models.Model):
-
-    category = models.CharField(
-        verbose_name=_("Category"),
-        max_length=250, blank=True,
-        unique=True, null=True)
-    
-    apparatus_protocol = models.ForeignKey(
-        Protocol,
-        verbose_name=_("Apparatus Protocol"), 
-        related_name='%(class)s_main_apparatus_protocol',
-        blank = True, 
-        null=True, 
-        on_delete=models.SET_NULL)
-
-    objects = CategoryManager()
+class Category(Category):
 
     class Meta:
-        verbose_name = _("Category")
-        verbose_name_plural = _("Categories")
-        abstract = True
+        verbose_name = _("Category Pendulum")
+        verbose_name_plural = _("Categories Pendulum")
 
     def __str__(self):
         return self.category
@@ -63,7 +48,7 @@ class SubCategory(models.Model):
         max_length=250, blank=True, null=True)
 
     category = models.ForeignKey(
-        Category_P, null=True, blank=True,
+        Category, null=True, blank=True,
         verbose_name=_("Category"), on_delete=models.CASCADE)
 
     objects = CategoryManager()
@@ -93,7 +78,7 @@ class Quiz(models.Model):
         verbose_name=_("user friendly url"))
 
     category = models.ForeignKey(
-        Category_P, null=True, blank=True,
+        Category, null=True, blank=True,
         verbose_name=_("Category"), on_delete=models.CASCADE)
 
     random_order = models.BooleanField(
@@ -233,7 +218,7 @@ class Progress(models.Model):
         score_before = self.score
         output = {}
 
-        for cat in Category_P.objects.all():
+        for cat in Category.objects.all():
             to_find = re.escape(cat.category) + r",(\d+),(\d+),"
             #  group 1 is score, group 2 is highest possible
 
@@ -268,7 +253,7 @@ class Progress(models.Model):
 
         Does not return anything.
         """
-        category_test = Category_P.objects.filter(category=question.category)\
+        category_test = Category.objects.filter(category=question.category)\
                                         .exists()
 
         if any([item is False for item in [category_test,
@@ -622,7 +607,7 @@ class Question(models.Model):
                                   verbose_name=_("Quiz"),
                                   blank=True)
 
-    category = models.ForeignKey(Category_P,
+    category = models.ForeignKey(Category,
                                  verbose_name=_("Category"),
                                  blank=True,
                                  null=True,
