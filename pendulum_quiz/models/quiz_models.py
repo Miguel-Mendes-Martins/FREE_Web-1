@@ -27,7 +27,6 @@ class CategoryManager(models.Manager):
         new_category.save()
         return new_category
 
-
 @python_2_unicode_compatible
 class Category(models.Model):
 
@@ -62,7 +61,7 @@ class SubCategory(models.Model):
         max_length=250, blank=True, null=True)
 
     category = models.ForeignKey(
-        Category, null=True, blank=True,
+        Category, null=True, blank=True, 
         related_name='%(app_label)s_%(class)s_category',
         verbose_name=_("Category"), on_delete=models.CASCADE)
 
@@ -399,13 +398,13 @@ class Sitting(models.Model):
     """
 
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
+        settings.AUTH_USER_MODEL,
         related_name='%(app_label)s_%(class)s_user',
         verbose_name=_("User"), 
         on_delete=models.CASCADE)
 
     quiz = models.ForeignKey(
-        Quiz, 
+        Quiz,
         related_name='%(app_label)s_%(class)s_quiz',
         verbose_name=_("Quiz"), 
         on_delete=models.CASCADE)

@@ -131,13 +131,30 @@
       <label for="Return to Moodle"></label>
       <input type=hidden name="score" value="{{score_send}}">
       <input type=hidden name="launch_url" value="http://172.20.0.1/">
-      <input type=hidden name="next" value="/mc_quiz/">
+      <input type=hidden name="next" value="/pendulum_quiz/">
       <input type=hidden name="sitting_pk" value="{{sitting.pk}}">
       <input type="submit" value="Return to Moodle">
     </form>
   {% else %}
-    <a href="{% url 'mc_quiz:quiz_index'%}"><button class='ui button'>{% trans 'Return to Quiz list'%}</button></a> 
+    <a href="{% url 'pendulum_quiz:quiz_index'%}"><button class='ui button'>{% trans 'Return to Quiz list'%}</button></a> 
   {% endif %}
 
 {% endblock %}
 
+{% block script %}
+
+  {% comment %} <script src="{% static 'free/js/configuration-input.js' %}"></script>
+  <script src="{% static 'free/js/buttonsFREE.js' %}"></script>
+  <script type='text/javascript'>
+    var percentage = document.getElementById("percent").textContent
+    const config_input = new ConfigurationInput("configuration-input");
+    window.addEventListener('message', function(event) {
+      console.log("Message received from the child: " + event.data); // Message received from child
+      if(event.data === "finished"){
+        $("#continueButton").removeClass("disabled");
+      }
+      });
+  </script> {% endcomment %}
+
+
+{% endblock%}

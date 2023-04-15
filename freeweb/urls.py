@@ -18,7 +18,8 @@ from django.urls import include, path
 from django.conf.urls.static import static
 from django.conf import settings
 from django.views.i18n import JavaScriptCatalog
-from quiz_pendulum.quiz_structure.admin import pendquiz_admin_site
+#from quiz_pendulum.quiz_structure.admin import pendquiz_admin_site
+from pendulum_quiz.admin import pendquiz_admin_site
 
 urlpatterns = [
     path('', include('free.urls')),
@@ -31,6 +32,7 @@ urlpatterns = [
     path('', include('free.userAdmin.urls')),
     path('mc_quiz/',include('mc_quiz.quiz_mc.urls'),name='mc_quiz'),
     path('quiz_pendulum/',include('quiz_pendulum.quiz_structure.urls'),name='quiz_pendulum'),
+    path('pendulum_quiz/',include('pendulum_quiz.urls'),name='pendulum_quiz'),
     path('lti/', include('lti_provider.urls')),
     path('pendquiz-admin/', pendquiz_admin_site.urls)
 ]

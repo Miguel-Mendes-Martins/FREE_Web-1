@@ -75,7 +75,8 @@ INSTALLED_APPS = [
     'quiz_pendulum.quiz_structure',
     'quiz_pendulum.multiplechoice_questions',
     'quiz_pendulum.truefalse_questions',
-    'quiz_pendulum.open_questions'
+    'quiz_pendulum.open_questions',
+    'pendulum_quiz'
 ]
 
 MIDDLEWARE = [
