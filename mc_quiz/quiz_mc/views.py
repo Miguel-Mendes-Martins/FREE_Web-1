@@ -227,6 +227,7 @@ class QuizTake(FormView):
                     'percent': self.sitting.get_percent_correct,
                     'sitting': self.sitting,
                     'score_send': score_send,
+                    'app_name': __package__.rsplit('.', 1)[-1]
                 }
                 if self.request.session.get('lti_login') is not None:
                     results['lti'] = True
@@ -361,6 +362,7 @@ class QuizTake(FormView):
             'sitting': self.sitting,
             'previous': self.previous,
             'score_send': score_send,
+            'app_name': __package__.rsplit('.', 1)[-1]
         }
         self.sitting.mark_quiz_complete()
         if self.request.session.get('lti_login') is not None:

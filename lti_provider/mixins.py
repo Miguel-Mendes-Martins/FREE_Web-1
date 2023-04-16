@@ -45,7 +45,7 @@ class LTIAuthMixin(object):
         user = authenticate(request=request, lti=lti)
         if user is None:
             lti.clear_session(request)
-            return HttpResponseRedirect(reverse('lti-fail-auth'))
+            return HttpResponseRedirect(reverse('lti_provider:lti-fail-auth'))
 
         # login
         login(request, user)
@@ -54,7 +54,7 @@ class LTIAuthMixin(object):
         try:
             self.course_configuration(request, lti)
         except (KeyError, ValueError, LTICourseContext.DoesNotExist):
-            return HttpResponseRedirect(reverse('lti-course-config'))
+            return HttpResponseRedirect(reverse('lti_provider:lti-course-config'))
 
         self.lti = lti
         return super(LTIAuthMixin, self).dispatch(request, *args, **kwargs)
@@ -71,7 +71,7 @@ class LTILoggedInMixin(object):
         user = authenticate(request=request, lti=lti)
         if user is None:
             lti.clear_session(request)
-            return HttpResponseRedirect(reverse('lti-fail-auth'))
+            return HttpResponseRedirect(reverse('lti_provider:lti-fail-auth'))
 
         # login
         login(request, user)

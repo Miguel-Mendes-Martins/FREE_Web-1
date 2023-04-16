@@ -2,8 +2,6 @@ from rest_framework import generics, serializers, views
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from free.models import *
-#from mc_quiz.quiz_mc.models import *
-#from montecarlo_quiz.models.quiz_models import Quiz,Sitting
 import json
 import decimal
 from jsonschema import validate, ValidationError as JSONValidationError

@@ -5,7 +5,7 @@ from lti_provider.views import *
 app_name = 'lti_provider'
 urlpatterns = [
     re_path(r'^config.xml$', LTIConfigView.as_view(), {}, 'lti-config'),
-    re_path(r'^auth$', LTIFailAuthorization.as_view(), {}, 'lti-fail-auth'),
+    re_path(r'^auth$', LTIFailAuthorization.as_view(), {}, name="lti-fail-auth"),
     re_path(r'^course/config$',
             LTICourseConfigure.as_view(), {}, 'lti-course-config'),
     re_path(r'^course/enable/$',

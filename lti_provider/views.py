@@ -14,7 +14,7 @@ from django.views.generic.base import View, TemplateView
 from lti_provider.mixins import LTIAuthMixin, LTILoggedInMixin
 from lti_provider.models import LTICourseContext
 from pylti.common import LTIPostMessageException, post_message
-from mc_quiz.quiz_mc.models import Sitting
+from django.apps import apps
 
 
 try:
@@ -101,12 +101,21 @@ class LTIRoutingView(LTIAuthMixin, View):
             pk = request.GET.get('pk')
             url = self.lookup_assignment_name(assignment_name, pk)
         elif request.POST.get('custom_category', None) is not None:
-            assignment_name = (f"{request.POST.get('custom_category')}:"
+            app_url = (f"{request.POST.get('custom_category')}:"
                               "quiz_question")
-            url = reverse(assignment_name,args=(
+            print("assignment:", app_url)
+            print("request:",request.POST.get('custom_quiz_url'))
+            url = reverse(app_url,args=(
                 request.POST.get('custom_quiz_url'),))
+            print("url", url)
+        elif request.POST.get('custom_experiment',None) is not None:
+            app_url = "free:execution-create"
+            url = reverse(app_url,args=(
+                request.POST.get('custom_apparatus_id'),
+                request.POST.get('custom_protocol_id')))
+            print("url", url)
         elif settings.LTI_TOOL_CONFIGURATION.get('new_tab'):
-            url = reverse('lti-landing-page')
+            url = reverse('lti_provider:lti-landing-page')
         else:
             url = settings.LTI_TOOL_CONFIGURATION['landing_url'].format(
                 self.request.scheme, self.request.get_host())
@@ -185,7 +194,7 @@ class LTICourseEnableView(LTILoggedInMixin, View):
             '<strong>Success!</strong> {} is connected to {}.'.format(
                 title, settings.LTI_TOOL_CONFIGURATION.get('title')))
 
-        url = reverse('lti-landing-page', args=[course_context])
+        url = reverse('lti_provider:lti-landing-page', args=[course_context])
         return HttpResponseRedirect(url)
 
 
@@ -228,6 +237,8 @@ class LTIPostGrade(LTIAuthMixin, View):
             msg = ('Your score was submitted. Great job!')
             messages.add_message(request, messages.INFO, msg)
             #confirm submition:
+            Sitting = apps.get_model(request.POST.get('app_name'),'Sitting')
+            print("sitting pk",request.POST.get('sitting_pk'))
             sit = Sitting.objects.get(pk=request.POST.get('sitting_pk'))
             sit.mark_quiz_sent_moodle()
 

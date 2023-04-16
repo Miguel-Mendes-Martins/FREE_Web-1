@@ -54,7 +54,11 @@ class CreateExecutionView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         apparatus_id = kwargs['apparatus_id']
         protocol_id = kwargs['protocol_id']
-        context['base'] = "free/base.html"
+        if self.request.session.get('lti_login') is not None:
+            context['base'] = "free/base_stripped.html"
+        else:
+            context['base'] = "free/base.html"
+        
 
         self.apparatus = get_object_or_404(Apparatus, pk=apparatus_id)
 

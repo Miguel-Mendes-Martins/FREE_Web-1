@@ -16,7 +16,6 @@ from model_utils.managers import InheritanceManager
 from django.db.models import F
 
 from free.models import *
-# from mc_quiz.quiz_mc.models import *
 import random
 
 class CategoryManager(models.Manager):
