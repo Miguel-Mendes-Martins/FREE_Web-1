@@ -6,7 +6,7 @@ from django.core.validators import (
     MaxValueValidator, validate_comma_separated_integer_list,
 )
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from six import python_2_unicode_compatible
 from django.conf import settings
 

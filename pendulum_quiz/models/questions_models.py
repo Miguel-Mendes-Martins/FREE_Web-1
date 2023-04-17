@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 from six import python_2_unicode_compatible
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from .quiz_models import Question
 from free.models import *
 from free.views.api import ResultSerializer
