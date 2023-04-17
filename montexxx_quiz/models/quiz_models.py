@@ -53,26 +53,29 @@ class Category(models.Model):
         return self.category
 
 
-@python_2_unicode_compatible
-class SubCategory(models.Model):
+# @python_2_unicode_compatible
+# class SubCategory(models.Model):
 
-    sub_category = models.CharField(
-        verbose_name=_("Sub-Category"),
-        max_length=250, blank=True, null=True)
+#     # FETCH = "Fetch"
+#     # CREATE = "Create"
 
-    category = models.ForeignKey(
-        Category, null=True, blank=True, 
-        related_name='%(app_label)s_%(class)s_category',
-        verbose_name=_("Category"), on_delete=models.CASCADE)
+#     sub_category = models.CharField(
+#         verbose_name=_("Sub-Category"),
+#         max_length=250, blank=True, null=True)
 
-    objects = CategoryManager()
+#     category = models.ForeignKey(
+#         Category, null=True, blank=True, 
+#         related_name='%(app_label)s_%(class)s_category',
+#         verbose_name=_("Category"), on_delete=models.CASCADE)
 
-    class Meta:
-        verbose_name = _("Sub-Category")
-        verbose_name_plural = _("Sub-Categories")
+#     objects = CategoryManager()
 
-    def __str__(self):
-        return self.sub_category
+#     class Meta:
+#         verbose_name = _("Sub-Category")
+#         verbose_name_plural = _("Sub-Categories")
+
+#     def __str__(self):
+#         return self.sub_category
 
 
 @python_2_unicode_compatible
@@ -614,13 +617,14 @@ class Sitting(models.Model):
     def category(self):
         return self.quiz.category
 
-
 @python_2_unicode_compatible
 class Question(models.Model):
     """
     Base class for all question types.
     Shared properties placed here.
     """
+
+
 
     quiz = models.ManyToManyField(Quiz,
                                   verbose_name=_("Quiz"),
@@ -633,12 +637,21 @@ class Question(models.Model):
                                  null=True,
                                  on_delete=models.CASCADE)
 
-    sub_category = models.ForeignKey(SubCategory,
-                                     verbose_name=_("Sub-Category"),
-                                     related_name='%(app_label)s_%(class)s_subcategory',
-                                     blank=True,
-                                     null=True,
-                                     on_delete=models.CASCADE)
+    class RetrieveMethod(models.TextChoices):
+        CREATE = "CREATE", _("Create")
+        FETCH = "FETCH", _("Fetch")
+
+    sub_category = models.CharField(
+        max_length=6,
+        choices=RetrieveMethod.choices,
+    )
+
+    # sub_category = models.ForeignKey(SubCategory,
+    #                                  verbose_name=_("Sub-Category"),
+    #                                  related_name='%(app_label)s_%(class)s_subcategory',
+    #                                  blank=True,
+    #                                  null=True,
+    #                                  on_delete=models.CASCADE)
 
     figure = models.ImageField(upload_to='uploads/%Y/%m/%d',
                                blank=True,

@@ -55,10 +55,10 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ('category', 'apparatus_type')
 
 
-class SubCategoryAdmin(admin.ModelAdmin):
-    search_fields = ('sub_category', )
-    list_display = ('sub_category', 'category',)
-    list_filter = ('category',)
+# class SubCategoryAdmin(admin.ModelAdmin):
+#     # search_fields = ('sub_category', )
+#     # list_display = ('sub_category', 'category',)
+#     # # list_filter = ('category',)
 
 
 class MCQuestionAdmin(admin.ModelAdmin):
@@ -109,7 +109,7 @@ montexxx_admin_site = montexxxAdminSite(name='montexxxquiz_admin')
 
 montexxx_admin_site.register(Quiz, QuizAdmin)
 montexxx_admin_site.register(Category, CategoryAdmin)
-montexxx_admin_site.register(SubCategory, SubCategoryAdmin)
+# montexxx_admin_site.register(SubCategory, SubCategoryAdmin)
 montexxx_admin_site.register(MCQuestion, MCQuestionAdmin)
 montexxx_admin_site.register(Progress, ProgressAdmin)
 montexxx_admin_site.register(TF_Question, TFQuestionAdmin)
