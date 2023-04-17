@@ -24,6 +24,8 @@
                     <div class="menu">
                         {% if user.is_staff %}
                             <a href="{% url 'admin:index' %}" class="item"><p><i class="settings icon"></i>{% trans 'Administration'%}</p></a>
+                            <a href="{% url 'mcquiz_admin:index' %}" class="item"><p><i class="settings icon"></i>{% trans 'MCQuiz Administration'%}</p></a>
+                            <a href="{% url 'pendquiz_admin:index' %}" class="item"><p><i class="settings icon"></i>{% trans 'PendQuiz Administration'%}</p></a>
                             <a href="{% url 'video-config-list' %}" class="item"><p><i class="settings icon"></i>{% trans 'Video Config'%}</p></a>
                             <a href="{% url 'users-cleanup-admin' %}" class="item"><p><i class="settings icon"></i>{% trans 'Users Cleanup'%}</p></a>
                             <a href="{% url 'experiments-cleanup-admin' %}" class="item"><p><i class="settings icon"></i>{% trans 'Experiments Cleanup'%}</p></a>

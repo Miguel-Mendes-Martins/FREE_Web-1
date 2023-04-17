@@ -101,17 +101,17 @@ class EssayQuestionAdmin(admin.ModelAdmin):
 class SittingAdmin(admin.ModelAdmin):
     list_display =('user','complete')
 
-class PendulumAdminSite(admin.AdminSite):
-    site_header = "Pendulum Quiz admin"
-    site_title = "Pendulum Quiz Portal"
+class montexxxAdminSite(admin.AdminSite):
+    site_header = "montexxx Quiz admin"
+    site_title = "montexxx Quiz Portal"
 
-pendquiz_admin_site = PendulumAdminSite(name='pendquiz_admin')
+montexxx_admin_site = montexxxAdminSite(name='montexxxquiz_admin')
 
-pendquiz_admin_site.register(Quiz, QuizAdmin)
-pendquiz_admin_site.register(Category, CategoryAdmin)
-pendquiz_admin_site.register(SubCategory, SubCategoryAdmin)
-pendquiz_admin_site.register(MCQuestion, MCQuestionAdmin)
-pendquiz_admin_site.register(Progress, ProgressAdmin)
-pendquiz_admin_site.register(TF_Question, TFQuestionAdmin)
-pendquiz_admin_site.register(Essay_Question, EssayQuestionAdmin)
-pendquiz_admin_site.register(Sitting, SittingAdmin)
+montexxx_admin_site.register(Quiz, QuizAdmin)
+montexxx_admin_site.register(Category, CategoryAdmin)
+montexxx_admin_site.register(SubCategory, SubCategoryAdmin)
+montexxx_admin_site.register(MCQuestion, MCQuestionAdmin)
+montexxx_admin_site.register(Progress, ProgressAdmin)
+montexxx_admin_site.register(TF_Question, TFQuestionAdmin)
+montexxx_admin_site.register(Essay_Question, EssayQuestionAdmin)
+montexxx_admin_site.register(Sitting, SittingAdmin)

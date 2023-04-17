@@ -279,7 +279,7 @@ class QuizTake(FormView):
         context['sub_category'] = str(self.question.sub_category)
         context['decimal_cases'] = self.sitting.decimal_precision
 
-        context['base'] = "base.html"
+        context['base'] = "montecarlo_quiz/base.html"
 
         if self.request.session.get('lti_login') is not None:
 
@@ -488,7 +488,7 @@ class QuizTake(FormView):
 
         del self.request.session[self.quiz.anon_q_data()]
 
-        return render(self.request, 'result.html', results)
+        return render(self.request, 'montecarlo_quiz/result.html', results)
 
 
 

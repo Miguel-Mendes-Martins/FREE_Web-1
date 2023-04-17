@@ -133,7 +133,9 @@ class LTI(object):
         :return: consumers map
         """
         config = getattr(settings, 'PYLTI_CONFIG', dict())
+        print("config:",config)
         consumers = config.get('consumers', dict())
+        print("consumers:",consumers)
         return consumers
 
     def _validate_role(self):

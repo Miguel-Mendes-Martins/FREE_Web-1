@@ -67,13 +67,14 @@ INSTALLED_APPS = [
     'planck',
     'colisione',
     #Quiz apps
-    'mc_quiz.quiz_mc',
-    'mc_quiz.multichoice_mc',
-    'mc_quiz.true_false_mc',
-    'mc_quiz.essay_mc',
+    # 'mc_quiz.quiz_mc',
+    # 'mc_quiz.multichoice_mc',
+    # 'mc_quiz.true_false_mc',
+    # 'mc_quiz.essay_mc',
     'lti_provider',
     'pendulum_quiz',
-    'montecarlo_quiz'
+    'montecarlo_quiz',
+    'montexxx_quiz',
 ]
 
 MIDDLEWARE = [
@@ -301,7 +302,7 @@ if env.bool('FREE_LTI_PROVIDER'):
         'custom_fields': '',
         'allow_ta_access': True,
         'assignments': {
-            'mc_quiz': 'mc_quiz/',
+            '<name>': '<landing_url>',
             '<name>': '<landing_url>',
             '<name>': '<landing_url>',
             },
@@ -311,6 +312,9 @@ PYLTI_CONFIG = {
     'consumers': {
         'abcdefghijklmnopqrst': {
             'secret': 'uvwxyz1234567890ABCD'
+        },
+        'uvwxyz1234567890ABCD':{
+            'secret':'abcdefghijklmnopqrst'
         }
     }
 }

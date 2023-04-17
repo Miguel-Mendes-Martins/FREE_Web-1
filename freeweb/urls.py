@@ -21,6 +21,7 @@ from django.views.i18n import JavaScriptCatalog
 #from quiz_pendulum.quiz_structure.admin import pendquiz_admin_site
 from pendulum_quiz.admin import pendquiz_admin_site
 from montecarlo_quiz.admin import mcquiz_admin_site
+from montexxx_quiz.admin import montexxx_admin_site
 
 urlpatterns = [
     path('', include('free.urls')),
@@ -31,12 +32,14 @@ urlpatterns = [
     path('', include('social_django.urls', namespace='social')),
     path('', include('free.videoConfig.urls')),
     path('', include('free.userAdmin.urls')),
-    path('mc_quiz/',include('mc_quiz.quiz_mc.urls'),name='mc_quiz'),
+    #path('mc_quiz/',include('mc_quiz.quiz_mc.urls'),name='mc_quiz'),
     path('pendulum_quiz/',include('pendulum_quiz.urls'),name='pendulum_quiz'),
     path('montecarlo_quiz/',include('montecarlo_quiz.urls'),name='montecarlo_quiz'),
+    path('montexxx_quiz/',include('montexxx_quiz.urls'),name='montexxx_quiz'),
     path('lti/', include('lti_provider.urls')),
-    path('pendquiz-admin/', pendquiz_admin_site.urls),
-    path('mcquiz-admin/', mcquiz_admin_site.urls),
+    path('pendquiz-admin/', pendquiz_admin_site.urls, name='pendquiz_admin'),
+    path('mcquiz-admin/', mcquiz_admin_site.urls, name='mcquiz_admin'),
+    path('montexxx-admin/', montexxx_admin_site.urls, name='montexxx_admin'),
 ]
 
 if settings.DEBUG:

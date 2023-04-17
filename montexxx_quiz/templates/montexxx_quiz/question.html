@@ -51,7 +51,7 @@
 
 			</div>
 
-			{% include 'pendulum_quiz/correct_answer.html' %}
+			{% include 'correct_answer.html' %}
 
 			<p><strong>{% trans "Explanation" %}:</strong></p>
 			<div class="well " style="background-color: #fcf8e3;">
@@ -132,6 +132,7 @@
 			{% endif %}
 		{% endif %}
 
+
 {% endblock %}
 
 {% block script %}
@@ -151,6 +152,8 @@
 	}
 
 	function create_experiment(){
+		console.log(apparatus_id)
+		console.log(protocol_id)
 		form_config = {R: 2, Iteration:20 }
 		endpoint= "/api/v1/execution";
 		method_queue = 'post';

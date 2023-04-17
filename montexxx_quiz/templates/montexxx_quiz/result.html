@@ -1,4 +1,4 @@
-{% extends "pendulum_quiz/base.html" %}
+{% extends "montexxx_quiz/base.html" %}
 {% load i18n %}
 {% load static %}
 
@@ -29,7 +29,7 @@
 	  {{ previous.previous_outcome|yesno:"correct,incorrect" }}
 	</strong>
   </p>
-  {% include 'pendulum_quiz/correct_answer.html' %}
+  {% include 'correct_answer.html' %}
   <p><strong>{% trans "Explanation" %}:</strong></p>
   <div class="well " style="background-color: #fcf8e3;">
     <p>{{ previous.previous_question.explanation }}</p>
@@ -120,13 +120,13 @@
       <label for="Return to Moodle"></label>
       <input type=hidden name="score" value="{{score_send}}">
       <input type=hidden name="launch_url" value="http://172.20.0.1/">
-      <input type=hidden name="next" value="/pendulum_quiz/">
+      <input type=hidden name="next" value="/montexxx_quiz/">
       <input type=hidden name="sitting_pk" value="{{sitting.pk}}">
       <input type=hidden name="app_name" value="{{app_name}}">
       <input type="submit" value="Return to Moodle">
     </form>
   {% else %}
-    <a href="{% url 'pendulum_quiz:quiz_index'%}"><button class='ui button'>{% trans 'Return to Quiz list'%}</button></a> 
+    <a href="{% url 'montexxx_quiz:quiz_index'%}"><button class='ui button'>{% trans 'Return to Quiz list'%}</button></a> 
   {% endif %}
 
 {% endblock %}

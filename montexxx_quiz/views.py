@@ -37,14 +37,14 @@ class SittingFilterTitleMixin(object):
 
 
 class QuizListTable(Table):
-    action = TemplateColumn(template_name='pendulum_quiz/quiz_link.html')
+    action = TemplateColumn(template_name='montexxx_quiz/quiz_link.html')
 
     class Meta:
         model = Quiz
         fields = ['title', 'category', 'exam_paper', 'single_attempt']    
 
 class QuizListView(SingleTableView):
-    template_name = 'pendulum_quiz/quiz_list.html'
+    template_name = 'montexxx_quiz/quiz_list.html'
     table_class = QuizListTable
     queryset = Quiz.objects.all().filter(draft=False)
 
@@ -60,7 +60,7 @@ class SittingListTable(Table):
             ['attempt','quiz_title', 'current_score', 'max_score', 'percent'])    
 
 class SittingListView(SingleTableView):
-    template_name = 'pendulum_quiz/progress_list.html'
+    template_name = 'montexxx_quiz/progress_list.html'
     table_class = SittingListTable
     def get_queryset(self):
         return Sitting.objects.filter(user=self.request.user,complete=True)
@@ -75,7 +75,7 @@ class SittingListView(SingleTableView):
 #######################################
 
 class QuizIncompletePListTable(Table):
-    action = TemplateColumn(template_name='pendulum_quiz/incomplete_link.html')
+    action = TemplateColumn(template_name='montexxx_quiz/incomplete_link.html')
     q_left = Column(accessor='questions_left',verbose_name='Questions Left')
     q_total = Column(accessor='get_max_score',verbose_name='Total Questions')
     category = Column(accessor='category',verbose_name='Category')
@@ -85,7 +85,7 @@ class QuizIncompletePListTable(Table):
         fields = ['user','quiz','category','q_left','q_total']    
         
 class QuizIncompleteListView(SingleTableView):
-    template_name = 'pendulum_quiz/incomplete_list.html'
+    template_name = 'montexxx_quiz/incomplete_list.html'
     table_class = QuizIncompletePListTable
     def get_queryset(self):
         return Sitting.objects.filter(user=self.request.user,complete=False)
@@ -111,7 +111,7 @@ class CategoriesListView(ListView):
 
 class ViewQuizListByCategory(ListView):
     model = Quiz
-    template_name = 'pendulum_quiz/view_quiz_category.html'
+    template_name = 'montexxx_quiz/view_quiz_category.html'
 
     def dispatch(self, request, *args, **kwargs):
         self.category = get_object_or_404(
@@ -135,7 +135,7 @@ class ViewQuizListByCategory(ListView):
 
 
 class QuizUserProgressView(TemplateView):
-    template_name = 'pendulum_quiz/progress.html'
+    template_name = 'montexxx_quiz/progress.html'
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -188,10 +188,10 @@ class QuizMarkingDetail(QuizMarkerMixin, DetailView):
 
 class QuizTake(FormView):
     form_class = QuestionForm
-    template_name = 'pendulum_quiz/question.html'
-    result_template_name = 'pendulum_quiz/result.html'
-    single_complete_template_name = 'pendulum_quiz/single_complete.html'
-    not_submited_template_name = 'pendulum_quiz/send_result.html'
+    template_name = 'montexxx_quiz/question.html'
+    result_template_name = 'montexxx_quiz/result.html'
+    single_complete_template_name = 'montexxx_quiz/single_complete.html'
+    not_submited_template_name = 'montexxx_quiz/send_result.html'
 
     def dispatch(self, request, *args, **kwargs):
         self.quiz = get_object_or_404(Quiz, url=self.kwargs['quiz_name'])
@@ -225,6 +225,8 @@ class QuizTake(FormView):
                     results['lti'] = True
                 else:
                     results['lti'] = False
+                print("results:",results)
+                print("app name:",__package__.rsplit('.', 1)[-1])
                 return render(request,self.not_submited_template_name,results)
         else:
             self.sitting = self.anon_load_sitting()
@@ -277,7 +279,7 @@ class QuizTake(FormView):
         context['sub_category'] = str(self.question.sub_category)
         context['decimal_cases'] = self.sitting.decimal_precision
 
-        context['base'] = "pendulum_quiz/base.html"
+        context['base'] = "montexxx_quiz/base.html"
 
         if self.request.session.get('lti_login') is not None:
 
@@ -289,13 +291,13 @@ class QuizTake(FormView):
             context['previous'] = self.previous
         if hasattr(self, 'progress'):
             context['progress'] = self.progress
-        #pendulum = 1, montecarlo = 2 both in aparatus and in category
+        #pendulum = 1, montexxx = 2 both in aparatus and in category
         context['execution_json'] = {}
         context['final_result'] = {}
         context['apparatus'] = (
-            Apparatus.objects.get(pk=self.question.category.pk))
+            Apparatus.objects.get(pk=self.question.category.apparatus_protocol.pk))
         context['protocol'] = (
-            Protocol.objects.get(pk=self.question.category.pk))
+            Protocol.objects.get(pk=self.question.category.apparatus_protocol.pk))
         self.sitting.decimal_precision = random.randint(3,7)
         self.sitting.save()
         return context
@@ -374,9 +376,12 @@ class QuizTake(FormView):
         return render(self.request, self.result_template_name, results)
 
     def get_random_execution(self,appar_id):
+        print("apparatus:",appar_id)
         exe_query = Execution.objects.filter(protocol_id=appar_id,status='F')
         pks = list(exe_query.values_list('id',flat=True))
+        print("pks:",pks)
         random_pk = random.choice(pks)
+        print("rabnd pks:",random_pk)
         return exe_query.get(pk=random_pk)
 
     def anon_load_sitting(self):
@@ -486,7 +491,7 @@ class QuizTake(FormView):
 
         del self.request.session[self.quiz.anon_q_data()]
 
-        return render(self.request, 'pendulum_quiz/result.html', results)
+        return render(self.request, 'montexxx_quiz/result.html', results)
 
 
 

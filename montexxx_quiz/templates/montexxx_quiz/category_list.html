@@ -1,4 +1,4 @@
-{% extends 'montecarlo_quiz/base.html' %}
+{% extends 'montexxx_quiz/base.html' %}
 {% load i18n %}
 {% block title %}{% trans "All Quizzes" %}{% endblock %}
 
@@ -8,7 +8,7 @@
 <ul>
   {% for cat in category_list %}
   <li>
-	<a href="{% url 'montecarlo_quiz:quiz_category_list_matching' category_name=cat.category %}">
+	<a href="{% url 'montexxx_quiz:quiz_category_list_matching' category_name=cat.category %}">
 	  {{ cat.category }}
 	</a>
   </li>

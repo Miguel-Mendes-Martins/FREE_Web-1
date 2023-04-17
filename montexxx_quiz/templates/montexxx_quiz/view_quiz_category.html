@@ -1,4 +1,4 @@
-{% extends 'montecarlo_quiz/base.html' %}
+{% extends 'montexxx_quiz/base.html' %}
 {% load i18n %}
 {% block title %}{% trans "Quizzes related to" %} {{ category.category }}{% endblock %}
 
@@ -10,7 +10,7 @@
         <ul>
         {% for quiz in quizzes %}
             <li>
-			  <a href="{% url 'montecarlo_quiz:quiz_question' quiz_name=quiz.url %}">
+			  <a href="{% url 'montexxx_quiz:quiz_question' quiz_name=quiz.url %}">
 				{{ quiz.title }}
 			  </a>
 			</li>
