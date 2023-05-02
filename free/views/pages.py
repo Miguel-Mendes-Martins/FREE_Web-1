@@ -25,7 +25,7 @@ class ExecutionView(LoginRequiredMixin, TemplateView):
         context['protocol'] = self.execution.protocol
         if (self.request.META.get('HTTP_REFERER') != None):
             context['source'] = self.request.META.get('HTTP_REFERER').split("/")[3]
-            if self.request.META.get('HTTP_REFERER').split("/")[5] == "take":
+            if len(self.request.META.get('HTTP_REFERER').split("/"))>=6 and self.request.META.get('HTTP_REFERER').split("/")[5] == "take":
                 context['base'] = "free/base_stripped.html"
             else:
                 context['base'] = "free/base.html"
